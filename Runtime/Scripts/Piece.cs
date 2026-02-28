@@ -21,6 +21,7 @@ namespace Andrey04o.Chess {
         [UdonSynced] public byte position;
         public byte positionPrevious;
         public byte[] dir1 = new byte[27];
+        public Vector2Int[] dir2 = new Vector2Int[27];
         public byte dir1Count = 0;
         public bool isBlack = false;
         public byte isNotMoved = 0;
@@ -68,7 +69,7 @@ namespace Andrey04o.Chess {
         virtual public void PerformMove(Cell cell, Piece piece) {
             //gameField.cells[position].attackBy
             //RemoveAttack();
-            piece.RemoveAttack();
+            RemoveAttack(piece);
             piece.positionPrevious = piece.position;
             piece.gameField.cells[piece.position].pieceCurrent = null;
             piece.position = cell.position;
@@ -86,7 +87,7 @@ namespace Andrey04o.Chess {
 
         }
         public void PlacePiece(Cell cell, Piece piece) {
-            piece.RemoveAttack();
+            GetPiece().RemoveAttack(this);
             piece.positionPrevious = piece.position;
             piece.gameField.cells[piece.position].pieceCurrent = null;
             piece.position = cell.position;
@@ -97,7 +98,7 @@ namespace Andrey04o.Chess {
 
         public void PerformCapture() {
             if (isCaptured == 1) {
-                RemoveAttack();
+                GetPiece().RemoveAttack(this);
                 meshRenderer.enabled = false;
                 GetCurrentCell().pieceCurrent = null;
                 //RemoveAttack();
@@ -108,21 +109,15 @@ namespace Andrey04o.Chess {
         }
         public void AddAttack(Cell cell) {
             cell.SetAttack(this, true);
-            Debug.Log(cell.position);
             dir1[dir1Count] = cell.position;
             dir1Count++;
         }
-        void AddAttack(Cell[] cells) {
-            foreach (Cell cell in cells) {
-                AddAttack(cell);
-            }
-        }
-        public void RemoveAttack() {
-            for(int i = 0; i < dir1Count; i++) {
-                gameField.cells[dir1[i]].SetAttack(this, false);
+        virtual public void RemoveAttack(Piece piece) {
+            for(int i = 0; i < piece.dir1Count; i++) {
+                piece.gameField.cells[piece.dir1[i]].SetAttack(piece, false);
             }
             
-            dir1Count = 0;
+            piece.dir1Count = 0;
         }
         public void AddCellAttack(Vector2Int dir) {
             Cell cell = GetCurrentCell().GetNeighbourByOffset(dir);
@@ -131,7 +126,12 @@ namespace Andrey04o.Chess {
             }
         }
         public void AddSlidingCellAttack(Vector2Int dir) {
-            AddAttack(GetCurrentCell().GetSlidingCells(dir));
+            Cell[] cells = GetCurrentCell().GetSlidingCells(dir);
+            foreach (Cell cell in cells) {
+                dir2[dir1Count] = dir;
+                AddAttack(cell);
+                cell.SetAttackVector(dir, true);
+            }
         }
         virtual public void ShowMove(Piece piece) {
             for (int i = 0; i < piece.dir1Count; i++) {

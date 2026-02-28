@@ -43,7 +43,7 @@ namespace Andrey04o.Chess {
         public void RemoveAttack() {
             isAttackCalc = false;
             foreach (Piece piece in pieces.InTableAll) {
-                piece.RemoveAttack();
+                piece.GetPiece().RemoveAttack(piece);
             }
             foreach (Cell cell in cells) {
                 cell.RemoveAttack();

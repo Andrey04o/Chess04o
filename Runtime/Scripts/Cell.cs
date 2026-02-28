@@ -18,6 +18,7 @@ namespace Andrey04o.Chess {
         //public byte[] attackBy;
         public byte attackByCount;
         public byte attackByCountBlack;
+        public byte attackVector;
         public Material materialNormal;
         public Material materialAttack;
         public Material materialCurrent;
@@ -26,6 +27,7 @@ namespace Andrey04o.Chess {
         [HideInInspector] public byte castling = 0;
         public TextMeshPro text1;
         public TextMeshPro text2;
+        public TextMeshPro text3;
         public void PlacePiece(Piece piece) {
             //gameField.cells[piece.position].pieceCurrent = null;
             pieceCurrent = piece;
@@ -244,6 +246,39 @@ namespace Andrey04o.Chess {
             }
             return false;
         }
+        public void SetAttackVector(Vector2Int dir, bool isAttack) {
+            
+            int bitPosition = -1;
+            
+            if (dir.x == 1 && dir.y == 0) {
+                bitPosition = 7; // Right
+            } else if (dir.x == -1 && dir.y == 0) {
+                bitPosition = 6; // Left
+            } else if (dir.x == 0 && dir.y == 1) {
+                bitPosition = 5; // Up
+            } else if (dir.x == 0 && dir.y == -1) {
+                bitPosition = 4; // Down
+            } else if (dir.x == 1 && dir.y == 1) {
+                bitPosition = 3; // Up-Right
+            } else if (dir.x == -1 && dir.y == 1) {
+                bitPosition = 2; // Up-Left
+            } else if (dir.x == 1 && dir.y == -1) {
+                bitPosition = 1; // Down-Right
+            } else if (dir.x == -1 && dir.y == -1) {
+                bitPosition = 0; // Down-Left
+            }
+            
+            if (bitPosition >= 0) {
+                if (isAttack)
+                attackVector |= (byte)(1 << bitPosition);
+                else {
+                    attackVector &= (byte)(~(1 << bitPosition) & 0xFF);
+                }
+                
+            }
+            text3.text = attackVector + "";
+        }
+
 
     }
 }
