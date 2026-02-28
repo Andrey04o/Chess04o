@@ -79,22 +79,29 @@ namespace Andrey04o.Chess {
                 piece.gameField.AddMove(piece.GetCurrentCell().GetRight().GetRight()); 
             }
         }
+        bool castling = false;
         public override void PerformMove(Cell cell, Piece piece)
         {
             if (isNotMoved == 0) {
                 if (cell.castling == 0) return;
-                Piece piece1;
-                if (cell.castling == 1) {
-                    piece1 = cell.GetLeft().pieceCurrent;
-                    PlacePiece(cell.GetRight(), piece1);
-                    //cell.GetLeft().GetLeft().pieceCurrent.p
-                }
-                if (cell.castling == 2) {
-                    piece1 = cell.GetRight().GetRight().pieceCurrent;
-                    PlacePiece(cell.GetLeft(), piece1);
-                }
+                castling = true;
             }
             base.PerformMove(cell, piece);
+        }
+        public override void AfterMove(Cell cell, Piece piece)
+        {
+            base.AfterMove(cell, piece);
+            if (castling == false) return;
+            castling = false;
+            Piece piece1;
+            if (cell.castling == 1) {
+                piece1 = cell.GetLeft().pieceCurrent;
+                PlacePiece(cell.GetRight(), piece1);
+            }
+            if (cell.castling == 2) {
+                piece1 = cell.GetRight().GetRight().pieceCurrent;
+                PlacePiece(cell.GetLeft(), piece1);
+            }
         }
     }
 }

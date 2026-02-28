@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UdonSharp;
 using System;
+using TMPro;
 namespace Andrey04o.Chess {
     public class Cell : UdonSharpBehaviour
     {
@@ -23,6 +24,8 @@ namespace Andrey04o.Chess {
         public MeshRenderer meshRenderer;
         [HideInInspector] public bool isCanMoveHere = false;
         [HideInInspector] public byte castling = 0;
+        public TextMeshPro text1;
+        public TextMeshPro text2;
         public void PlacePiece(Piece piece) {
             //gameField.cells[piece.position].pieceCurrent = null;
             pieceCurrent = piece;
@@ -146,6 +149,8 @@ namespace Andrey04o.Chess {
                 if (piece.isBlack) attackByCountBlack--;
                 else attackByCount--;
             }
+            text1.text = attackByCount + "";
+            text2.text = attackByCountBlack + "";
         }
         public void RemoveAttack() {
             attackByCount = 0;
@@ -172,20 +177,6 @@ namespace Andrey04o.Chess {
                 SetMaterial(0);
             }
             return isCanMoveHere;
-        }
-        bool CheckIsSafe(Piece piece) {
-            if (gameField.pieces.king.id == piece.id) {
-                if (piece.isBlack) {
-                    if (attackByCount > 0) {
-                        return false;
-                    }
-                } else {
-                    if (attackByCountBlack > 0) {
-                        return false;
-                    }
-                }
-            }
-            return true;
         }
         /*
         bool CheckIsSafe(Piece piece) {
