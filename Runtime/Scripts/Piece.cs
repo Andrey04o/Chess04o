@@ -26,6 +26,7 @@ namespace Andrey04o.Chess {
         public bool isBlack = false;
         public byte isNotMoved = 0;
         public byte isCaptured = 0;
+        bool isMoved = false;
         public Cell GetCurrentCell() {
             return gameField.cells[position];
         }
@@ -58,6 +59,7 @@ namespace Andrey04o.Chess {
             }
             pieceGrab.StopGrab();
             if (cell != GetCurrentCell()) {
+                isMoved = true;
                 GetPiece().PerformMove(cell,this);
                 //gameField.HideMove();
                 //gameField.ChangeSide();
@@ -84,16 +86,22 @@ namespace Andrey04o.Chess {
             piece.PerformCalcAttack();
         }
         virtual public void AfterMove(Cell cell, Piece piece) {
-
+            if (piece.isMoved == true) {
+                piece.isMoved = false;
+                piece.GetCurrentCellPrevious().PerformVectorCheck(piece);
+                cell.PerformVectorCheck(piece);
+            }
         }
         public void PlacePiece(Cell cell, Piece piece) {
-            GetPiece().RemoveAttack(this);
+            piece.GetPiece().RemoveAttack(this);
             piece.positionPrevious = piece.position;
             piece.gameField.cells[piece.position].pieceCurrent = null;
             piece.position = cell.position;
             piece.isNotMoved = 1;
+            piece.isMoved = true;
             cell.PlacePiece(piece);
             piece.PerformCalcAttack();
+            piece.GetPiece().AfterMove(cell, piece);
         }
 
         public void PerformCapture() {

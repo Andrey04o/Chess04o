@@ -162,6 +162,8 @@ namespace Andrey04o.Chess {
                 idChess++;
                 piecesList.Add(piece);
                 piece.positionPrevious = piece.position;
+                cell.PlacePiece(piece);
+                piece.isNotMoved = 0;
                 EditorUtility.SetDirty(cell);
                 EditorUtility.SetDirty(piece);
             }

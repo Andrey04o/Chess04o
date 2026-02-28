@@ -278,6 +278,44 @@ namespace Andrey04o.Chess {
             }
             text3.text = attackVector + "";
         }
+        public void PerformVectorCheck(Piece piece) {
+            // Check if this cell has an attack vector
+            if (attackVector == 0) return;
+            
+            // Iterate through all 8 directions (bits 0-7)
+            for (int bitPosition = 0; bitPosition < 8; bitPosition++) {
+                // Check if this direction has an attack vector
+                if ((attackVector & (1 << bitPosition)) == 0) continue;
+                
+                // Convert bit position back to direction
+                Vector2Int negativeMovement = GetDirectionFromBitPosition(bitPosition);
+                
+                // Find the piece by moving in the negative direction
+                Cell neighbourCell = GetNeighbourByOffset(negativeMovement);
+                if (neighbourCell == null || neighbourCell.pieceCurrent == null) continue;
+                
+                Piece neighbourPiece = neighbourCell.pieceCurrent;
+                Debug.Log("found " + neighbourPiece.name);
+                
+                // Invoke RemoveAttack and PerformCalcAttack on the found piece
+                neighbourPiece.GetPiece().RemoveAttack(neighbourPiece);
+                neighbourPiece.PerformCalcAttack();
+            }
+        }
+        
+        Vector2Int GetDirectionFromBitPosition(int bitPosition) {
+            switch (bitPosition) {
+                case 7: return new Vector2Int(-1, 0);   // Right -> Left
+                case 6: return new Vector2Int(1, 0);    // Left -> Right
+                case 5: return new Vector2Int(0, -1);   // Up -> Down
+                case 4: return new Vector2Int(0, 1);    // Down -> Up
+                case 3: return new Vector2Int(-1, -1);  // Up-Right -> Down-Left
+                case 2: return new Vector2Int(1, -1);   // Up-Left -> Down-Right
+                case 1: return new Vector2Int(-1, 1);   // Down-Right -> Up-Left
+                case 0: return new Vector2Int(1, 1);    // Down-Left -> Up-Right
+                default: return Vector2Int.zero;
+            }
+        }
 
 
     }
