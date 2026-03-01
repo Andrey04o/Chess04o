@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.GameField, Assembly-CSharp
+      Data: Andrey04o.Chess.GameField, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -122,7 +122,7 @@ MonoBehaviour:
       Data: 7|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Cell[], Assembly-CSharp
+      Data: Andrey04o.Chess.Cell[], com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 

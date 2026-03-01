@@ -116,7 +116,7 @@ MonoBehaviour:
       Data: 6|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.RaycastButton.CursorController, Assembly-CSharp
+      Data: Andrey04o.RaycastButton.CursorController, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -230,7 +230,7 @@ MonoBehaviour:
       Data: 13|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.RaycastButton.RaycastButton, Assembly-CSharp
+      Data: Andrey04o.RaycastButton.RaycastButton, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -332,7 +332,7 @@ MonoBehaviour:
       Data: 18|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Piece, Assembly-CSharp
+      Data: Andrey04o.Chess.Piece, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 

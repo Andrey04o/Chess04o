@@ -87,6 +87,7 @@ namespace Andrey04o.Chess {
         }
         virtual public void AfterMove(Cell cell, Piece piece) {
             if (piece.isMoved == true) {
+                Debug.Log("ismoved");
                 piece.isMoved = false;
                 piece.GetCurrentCellPrevious().PerformVectorCheck(piece);
                 cell.PerformVectorCheck(piece);

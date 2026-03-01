@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Bishop, Assembly-CSharp
+      Data: Andrey04o.Chess.Bishop, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -122,7 +122,7 @@ MonoBehaviour:
       Data: 7|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.King, Assembly-CSharp
+      Data: Andrey04o.Chess.King, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -176,7 +176,7 @@ MonoBehaviour:
       Data: 10|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Knight, Assembly-CSharp
+      Data: Andrey04o.Chess.Knight, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -230,7 +230,7 @@ MonoBehaviour:
       Data: 13|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Pawn, Assembly-CSharp
+      Data: Andrey04o.Chess.Pawn, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -284,7 +284,7 @@ MonoBehaviour:
       Data: 16|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Queen, Assembly-CSharp
+      Data: Andrey04o.Chess.Queen, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -338,7 +338,7 @@ MonoBehaviour:
       Data: 19|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Rook, Assembly-CSharp
+      Data: Andrey04o.Chess.Rook, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -494,7 +494,7 @@ MonoBehaviour:
       Data: 27|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Piece[], Assembly-CSharp
+      Data: Andrey04o.Chess.Piece[], com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 

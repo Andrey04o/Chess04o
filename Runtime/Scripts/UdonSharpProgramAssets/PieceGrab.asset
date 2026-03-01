@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Piece, Assembly-CSharp
+      Data: Andrey04o.Chess.Piece, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 
@@ -176,7 +176,7 @@ MonoBehaviour:
       Data: 10|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.RaycastButton.CursorController, Assembly-CSharp
+      Data: Andrey04o.RaycastButton.CursorController, com.andrey04o.chess
     - Name: 
       Entry: 8
       Data: 

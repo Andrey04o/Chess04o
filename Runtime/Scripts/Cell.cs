@@ -22,12 +22,14 @@ namespace Andrey04o.Chess {
         public Material materialNormal;
         public Material materialAttack;
         public Material materialCurrent;
+        public Material materialOrange;
         public MeshRenderer meshRenderer;
         [HideInInspector] public bool isCanMoveHere = false;
         [HideInInspector] public byte castling = 0;
         public TextMeshPro text1;
         public TextMeshPro text2;
         public TextMeshPro text3;
+        public TextMeshPro text4;
         public void PlacePiece(Piece piece) {
             //gameField.cells[piece.position].pieceCurrent = null;
             pieceCurrent = piece;
@@ -39,7 +41,6 @@ namespace Andrey04o.Chess {
 
         public Cell GetNeighbour(Vector2Int dir) {
             if (gameField == null) gameField = line.gameField;
-                            Debug.Log("dir is" +dir);
             if (dir == Vector2Int.zero) {
                 return this;
             }
@@ -248,26 +249,8 @@ namespace Andrey04o.Chess {
         }
         public void SetAttackVector(Vector2Int dir, bool isAttack) {
             
-            int bitPosition = -1;
-            
-            if (dir.x == 1 && dir.y == 0) {
-                bitPosition = 7; // Right
-            } else if (dir.x == -1 && dir.y == 0) {
-                bitPosition = 6; // Left
-            } else if (dir.x == 0 && dir.y == 1) {
-                bitPosition = 5; // Up
-            } else if (dir.x == 0 && dir.y == -1) {
-                bitPosition = 4; // Down
-            } else if (dir.x == 1 && dir.y == 1) {
-                bitPosition = 3; // Up-Right
-            } else if (dir.x == -1 && dir.y == 1) {
-                bitPosition = 2; // Up-Left
-            } else if (dir.x == 1 && dir.y == -1) {
-                bitPosition = 1; // Down-Right
-            } else if (dir.x == -1 && dir.y == -1) {
-                bitPosition = 0; // Down-Left
-            }
-            
+            int bitPosition = GetBitPositionFromDirection(dir);
+            text3.text = "";
             if (bitPosition >= 0) {
                 if (isAttack)
                 attackVector |= (byte)(1 << bitPosition);
@@ -276,10 +259,17 @@ namespace Andrey04o.Chess {
                 }
                 
             }
-            text3.text = attackVector + "";
+            for (int bitPosition1 = 0; bitPosition1 < 8; bitPosition1++) {
+                // Check if this direction has an attack vector
+                if ((attackVector & (1 << bitPosition1)) == 0) continue;
+                text3.text += GetTextFromDirection(bitPosition1) + "/";
+            }
+            
         }
         public void PerformVectorCheck(Piece piece) {
+            //meshRenderer.material = materialOrange;
             // Check if this cell has an attack vector
+            text4.text = "0";
             if (attackVector == 0) return;
             
             // Iterate through all 8 directions (bits 0-7)
@@ -287,12 +277,15 @@ namespace Andrey04o.Chess {
                 // Check if this direction has an attack vector
                 if ((attackVector & (1 << bitPosition)) == 0) continue;
                 
-                // Convert bit position back to direction
-                Vector2Int negativeMovement = GetDirectionFromBitPosition(bitPosition);
-                
+                Vector2Int negativeMovement = GetDirectionFromBitPosition(bitPosition) * -1;
+                text4.text += GetTextFromDirection(bitPosition) + "/";
                 // Find the piece by moving in the negative direction
-                Cell neighbourCell = GetNeighbourByOffset(negativeMovement);
-                if (neighbourCell == null || neighbourCell.pieceCurrent == null) continue;
+                Cell neighbourCell = this;
+                for(;;) {
+                    neighbourCell = neighbourCell.GetNeighbourByOffset(negativeMovement);
+                    if (neighbourCell == null) return; // impossible
+                    if (neighbourCell.pieceCurrent != null) break;
+                }
                 
                 Piece neighbourPiece = neighbourCell.pieceCurrent;
                 Debug.Log("found " + neighbourPiece.name);
@@ -300,20 +293,48 @@ namespace Andrey04o.Chess {
                 // Invoke RemoveAttack and PerformCalcAttack on the found piece
                 neighbourPiece.GetPiece().RemoveAttack(neighbourPiece);
                 neighbourPiece.PerformCalcAttack();
+                neighbourCell.meshRenderer.material = materialOrange;
             }
+        }
+
+        int GetBitPositionFromDirection(Vector2Int dir) {
+            // Кодируем направление в индекс через смещение
+            // x: -1→0, 0→1, 1→2 | y: -1→0, 0→1, 1→2
+            int ix = dir.x + 1; // 0,1,2
+            int iy = dir.y + 1; // 0,1,2
+            int index = iy * 3 + ix; // 0..8
+            
+            // Таблица соответствия 3x3 → биты (9 = недопустимое)
+            int[] map = { 0, 2, 1, 6, 9, 7, 5, 3, 4 }; // [y= -1,0,1][x=-1,0,1]
+            
+            int result = map[index];
+            return result == 9 ? -1 : result;
         }
         
         Vector2Int GetDirectionFromBitPosition(int bitPosition) {
             switch (bitPosition) {
-                case 7: return new Vector2Int(-1, 0);   // Right -> Left
-                case 6: return new Vector2Int(1, 0);    // Left -> Right
-                case 5: return new Vector2Int(0, -1);   // Up -> Down
-                case 4: return new Vector2Int(0, 1);    // Down -> Up
-                case 3: return new Vector2Int(-1, -1);  // Up-Right -> Down-Left
-                case 2: return new Vector2Int(1, -1);   // Up-Left -> Down-Right
-                case 1: return new Vector2Int(-1, 1);   // Down-Right -> Up-Left
-                case 0: return new Vector2Int(1, 1);    // Down-Left -> Up-Right
+                case 7: return new Vector2Int(1, 0);
+                case 6: return new Vector2Int(-1, 0);
+                case 3: return new Vector2Int(0, 1);
+                case 2: return new Vector2Int(0, -1);
+                case 4: return new Vector2Int(1, 1);
+                case 5: return new Vector2Int(-1, 1);
+                case 1: return new Vector2Int(1, -1);
+                case 0: return new Vector2Int(-1, -1);
                 default: return Vector2Int.zero;
+            }
+        }
+        string GetTextFromDirection(int bitPosition) {
+            switch (bitPosition) {
+                case 7: return "Right";
+                case 6: return "Left";
+                case 3: return "Up";
+                case 2: return "Down";
+                case 4: return "Up-Right";
+                case 5: return "Up-Left";
+                case 1: return "Down-Right";
+                case 0: return "Down-Left";
+                default: return "-1";
             }
         }
 
