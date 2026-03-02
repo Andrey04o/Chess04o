@@ -21,7 +21,7 @@ namespace Andrey04o.Chess {
         [UdonSynced] public byte position;
         public byte positionPrevious;
         public byte[] dir1 = new byte[27];
-        public Vector2Int[] dir2 = new Vector2Int[27];
+        //public Vector2Int[] dir2 = new Vector2Int[27];
         public byte dir1Count = 0;
         public bool isBlack = false;
         public byte isNotMoved = 0;
@@ -48,7 +48,7 @@ namespace Andrey04o.Chess {
             pieceGrab.StartGrab(handler.cursorController);
             //gameField.RemoveAttack();
             //gameField.CalcAttacks();
-            PerformShowMove();
+            GetPiece().ShowMove(this);
         }
         public void StopGrab(Cell cell) {
             if (cell == null) {
@@ -58,7 +58,7 @@ namespace Andrey04o.Chess {
                 cell = gameField.cells[position];
             }
             pieceGrab.StopGrab();
-
+            gameField.HideMove();
             if (cell != GetCurrentCell()) {
                 isMoved = true;
                 GetPiece().PerformMove(cell,this);
@@ -86,7 +86,7 @@ namespace Andrey04o.Chess {
             piece.gameField.cells[piece.position].pieceCurrent = null;
             piece.position = cell.position;
             
-            piece.gameField.HideMove();
+            
             piece.gameField.ChangeSide();
 
             cell.PlacePiece(piece);
@@ -119,21 +119,31 @@ namespace Andrey04o.Chess {
                 //RemoveAttack();
             }
         }
-        public virtual void CalcAttack(Piece piece, bool isRemove = false) {
+        public virtual void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false) {
 
         }
-        public void AddAttack(Cell cell, bool isRemove = false) {
-            if (isRemove) dir1Count = 0;
-            cell.SetAttack(this, !isRemove);
-            dir1[dir1Count] = cell.position;
-            dir1Count++;
+        public void AddAttack(Cell cell, bool isRemove = false, bool isVisualMoving = false) {
+            cell.SetAttack(this, !isRemove, isVisualMoving);
+            if (isRemove) {
+                dir1Count = 0;
+            } else {
+                dir1[dir1Count] = cell.position;
+                dir1Count++;
+            }
         }
-        public void AddAttack(Cell cell, Vector2Int dir, bool isRemove = false) {
-            if (isRemove) dir1Count = 0;
-            cell.SetAttack(this, !isRemove);
-            dir1[dir1Count] = cell.position;
-            dir1Count++;
-            cell.SetAttackVector(dir, !isRemove);
+        public void AddAttack(Cell cell, Vector2Int dir, bool isRemove = false, bool isVisualMoving = false) {
+            cell.SetAttack(this, !isRemove, isVisualMoving);
+            if (isVisualMoving == false) cell.SetAttackVector(dir, !isRemove);
+            /*
+            if (isRemove) {
+                dir1Count = 0;
+            
+            } else {
+                dir1[dir1Count] = cell.position;
+                dir1Count++;
+            }
+            */
+            
         }
         virtual public void RemoveAttack(Piece piece) {
             piece.GetPiece().CalcAttack(piece, false);
@@ -145,27 +155,25 @@ namespace Andrey04o.Chess {
             piece.dir1Count = 0;
             */
         }
-        public void AddCellAttack(Vector2Int dir, bool isRemove = false) {
+        public void AddCellAttack(Vector2Int dir, bool isRemove = false, bool isVisualMoving = false) {
             Cell cell = GetCurrentCell().GetNeighbourByOffset(dir);
             if (cell != null) {
-                AddAttack(cell, isRemove);
+                AddAttack(cell, isRemove, isVisualMoving);
             }
         }
-        public void AddSlidingCellAttack(Vector2Int dir, bool isRemove = false) {
+        public void AddSlidingCellAttack(Vector2Int dir, bool isRemove = false, bool isVisualMoving = false) {
             Cell[] cells = GetCurrentCell().GetSlidingCells(dir);
             foreach (Cell cell in cells) {
                 //dir2[dir1Count] = dir;
-                AddAttack(cell, dir, isRemove);
+                AddAttack(cell, dir, isRemove, isVisualMoving);
                 //cell.SetAttackVector(dir, true);
             }
         }
         virtual public void ShowMove(Piece piece) {
-            for (int i = 0; i < piece.dir1Count; i++) {
-                piece.gameField.AddMove(piece.gameField.cells[piece.dir1[i]], piece);
-            }
-        }
-        public void PerformShowMove() {
-            GetPiece().ShowMove(this);
+            piece.GetPiece().CalcAttack(piece, false, true);
+            //for (int i = 0; i < piece.dir1Count; i++) {
+            //    piece.gameField.AddMove(piece.gameField.cells[piece.dir1[i]], piece);
+            //}
         }
         public Piece GetPiece() {
             return gameField.pieces.GetPiece(indexType);

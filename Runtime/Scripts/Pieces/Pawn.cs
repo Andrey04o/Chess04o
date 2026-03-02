@@ -6,23 +6,23 @@ using System;
 namespace Andrey04o.Chess {
     public class Pawn : Piece
     {
-        public override void CalcAttack(Piece piece, bool isRemove = false)
+        public override void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false)
         {
             base.CalcAttack(piece);
-            CheckAttack(piece, false, isRemove);
+            CheckAttack(piece, false, isRemove, isVisualMoving);
         }
-        void CheckAttack(Piece piece, bool checkEnPassant, bool isRemove = false) {
+        void CheckAttack(Piece piece, bool checkEnPassant, bool isRemove = false, bool isVisualMoving = false) {
             if (piece.isBlack) {
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(1,1), isRemove);
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(-1,1), isRemove);
+                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(1,1), isRemove, isVisualMoving);
+                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(-1,1), isRemove, isVisualMoving);
             } else {
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(1,-1), isRemove);
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(-1,-1), isRemove);
+                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(1,-1), isRemove, isVisualMoving);
+                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(-1,-1), isRemove, isVisualMoving);
             }
         }
-        void AddCellAttackPawn(Piece piece, bool checkEnPassant, Vector2Int dir, bool isRemove) {
+        void AddCellAttackPawn(Piece piece, bool checkEnPassant, Vector2Int dir, bool isRemove, bool isVisualMoving) {
             if (checkEnPassant == false) {
-                piece.AddCellAttack(dir, isRemove);
+                piece.AddCellAttack(dir, isRemove, isVisualMoving);
             } else {
                 Cell cell = piece.GetCurrentCell().GetNeighbourByOffset(dir);
                 if (cell == null) return;

@@ -5,13 +5,13 @@ using UdonSharp;
 namespace Andrey04o.Chess {
     public class Rook : Piece
     {
-        public override void CalcAttack(Piece piece, bool isRemove = false)
+        public override void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false)
         {
             base.CalcAttack(piece);
-            piece.AddSlidingCellAttack(new Vector2Int(1,0), isRemove);
-            piece.AddSlidingCellAttack(new Vector2Int(-1,0), isRemove);
-            piece.AddSlidingCellAttack(new Vector2Int(0,1), isRemove);
-            piece.AddSlidingCellAttack(new Vector2Int(0,-1), isRemove);
+            piece.AddSlidingCellAttack(new Vector2Int(1,0), isRemove, isVisualMoving);
+            piece.AddSlidingCellAttack(new Vector2Int(-1,0), isRemove, isVisualMoving);
+            piece.AddSlidingCellAttack(new Vector2Int(0,1), isRemove, isVisualMoving);
+            piece.AddSlidingCellAttack(new Vector2Int(0,-1), isRemove, isVisualMoving);
         }
     }
 }

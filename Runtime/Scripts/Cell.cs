@@ -145,8 +145,14 @@ namespace Andrey04o.Chess {
             }
         }
         */
-        public void SetAttack(Piece piece, bool isAttack) {
-            Debug.Log(name);
+        public void SetAttack(Piece piece, bool isAttack, bool isVisualMoving) {
+            if (isVisualMoving) {
+                if (isAttack)
+                    piece.gameField.AddMove(this, piece);
+                else
+                    SetMove(false);
+                return;
+            }
             if (isAttack) {
                 if (piece.isBlack) attackByCountBlack++;
                 else attackByCount++;
