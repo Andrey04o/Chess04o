@@ -15,6 +15,14 @@ namespace Andrey04o.Chess {
         public Piece enPassantPiece;
         public Cell enPassantCell;
         bool isAttackCalc = false;
+        public Cell[] cellChanged = new Cell[50];
+        public byte cellChangedCount = 0;
+        public Piece[] piecesToRemove = new Piece[10];
+        public byte piecesToRemoveCount = 0;
+        public Piece[] piecesMove = new Piece[10];
+        public Cell[] piecesMoveDestination = new Cell[10];
+        public byte piecesMoveCount = 0;
+        
         public bool IsHisTurn(Piece piece) {
             if (indexSideTurn == 0) {
                 if (piece.isBlack == false) {
@@ -112,5 +120,60 @@ namespace Andrey04o.Chess {
             base.OnDeserialization();
             PerformEnPassant();
         }
+        void AddCellChangedArray(Cell cell) {
+            cellChanged[cellChangedCount] = cell;
+            cellChangedCount++;
+        }
+        public void ResetChangedCell() {
+            for (int i = 0; i < cellChangedCount; i++) {
+                cellChanged[i].isCalculatedAttacks = 0;
+            }
+            cellChangedCount = 0;
+            piecesToRemoveCount = 0;
+            piecesMoveCount = 0;
+        }
+        public void AddChangedCell(Piece piece, Cell cell) {
+            cell.VectorGetPieces(piece);
+            AddCellChangedArray(cell);
+        }
+        public void AddChangedCell(Cell cell) {
+            AddCellChangedArray(cell);
+        }
+        public void UpdateChangedCells(bool isRemove = false) {
+            Piece piece;
+            byte isCalculatedAttacks;
+            if (isRemove) isCalculatedAttacks = 0;
+            else isCalculatedAttacks = 1;
+            for (int i = 0; i < cellChangedCount; i++) {
+                piece = cellChanged[i].pieceCurrent;
+                if (piece != null) {
+                    if (cellChanged[i].isCalculatedAttacks == isCalculatedAttacks) {
+                        piece.GetPiece().CalcAttack(piece, isRemove, false);
+                        cellChanged[i].isCalculatedAttacks++;
+                    }
+                }
+            }
+        }
+        public void AddRemovePiece(Piece piece) {
+            piecesToRemove[piecesToRemoveCount] = piece;
+            piecesToRemoveCount++;
+        }
+        public void AddChangePosition(Piece piece, Cell destination) {
+            //piecesMove[piecesMoveCount] = new PiecesMove();
+            piecesMove[piecesMoveCount]= piece;
+            piecesMoveDestination[piecesMoveCount] = destination;
+            piecesMoveCount++;
+        }
+        public void UpdateRemovePiece() {
+            for (int i = 0; i < piecesToRemoveCount; i++) {
+                piecesToRemove[i].PerformCapture();
+            }
+        }
+        public void UpdateChangePosition() {
+            for (int i = 0; i < piecesMoveCount; i++) {
+                piecesMove[i].PlacePiece(piecesMoveDestination[i]);
+            }
+        }
+
     }
 }

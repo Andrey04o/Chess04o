@@ -31,7 +31,6 @@ namespace Andrey04o.RaycastButton {
             base.OnRaycastMouseUp(handler);
             if (handler.currentPiece != null) {
                 handler.currentPiece.StopGrab(cell);
-                handler.currentPiece.gameField.HideMove();
             }
         }
     }

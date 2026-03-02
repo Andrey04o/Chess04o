@@ -32,6 +32,7 @@ namespace Andrey04o.Chess {
         public TextMeshPro text4;
         Piece[] piecesVector = new Piece[8];
         public byte piecesVectorCount;
+        public byte isCalculatedAttacks = 0;
         public void PlacePiece(Piece piece) {
             //gameField.cells[piece.position].pieceCurrent = null;
             pieceCurrent = piece;
@@ -98,7 +99,6 @@ namespace Andrey04o.Chess {
             
             Line lineAbove = gameField.lines[line.index + 1];
             if (lineAbove == null) return null;
-            Debug.Log(lineAbove.index);
             return lineAbove.cells[index];
         }
         public Cell GetDown() {
@@ -153,6 +153,7 @@ namespace Andrey04o.Chess {
                     SetMove(false);
                 return;
             }
+            Debug.Log(isAttack + " " + attackByCount + " "+ this.name);
             if (isAttack) {
                 if (piece.isBlack) attackByCountBlack++;
                 else attackByCount++;
@@ -274,13 +275,13 @@ namespace Andrey04o.Chess {
             }
             
         }
-        public void VectorGetPieces() {
+        public void VectorGetPieces(Piece piece) {
             //meshRenderer.material = materialOrange;
             // Check if this cell has an attack vector
             text4.text = "0";
             piecesVectorCount = 0;
             if (attackVector == 0) return;
-            
+            //gameField.ClearCellSliding();
             // Iterate through all 8 directions (bits 0-7)
             for (int bitPosition = 0; bitPosition < 8; bitPosition++) {
                 // Check if this direction has an attack vector
@@ -293,24 +294,25 @@ namespace Andrey04o.Chess {
                 for(;;) {
                     neighbourCell = neighbourCell.GetNeighbourByOffset(negativeMovement);
                     if (neighbourCell == null) return; // impossible
+                    //gameField.AddCellSliding(neighbourCell);
                     if (neighbourCell.pieceCurrent != null) break;
                 }
-                
                 Piece neighbourPiece = neighbourCell.pieceCurrent;
-                Debug.Log("found " + neighbourPiece.name);
+                if (neighbourPiece == piece) continue;
+                gameField.AddChangedCell(neighbourCell);
                 piecesVector[piecesVectorCount] = neighbourPiece;
                 piecesVectorCount++;
-                // Invoke RemoveAttack and PerformCalcAttack on the found piece
-                neighbourPiece.GetPiece().RemoveAttack(neighbourPiece);
-                neighbourPiece.GetPiece().CalcAttack(neighbourPiece);
+
                 neighbourCell.meshRenderer.material = materialOrange;
             }
         }
         public void VectorCalcAttack(bool isRemove = false) {
             for (int i = 0; i < piecesVectorCount; i++) {
+                if (piecesVector[i].isCaptured == 1) continue;
                 piecesVector[i].GetPiece().CalcAttack(piecesVector[i], isRemove);
             }
         }
+
 
         int GetBitPositionFromDirection(Vector2Int dir) {
             // Кодируем направление в индекс через смещение

@@ -91,7 +91,6 @@ namespace Andrey04o.RaycastButton {
                 isHold = false;
                 if (currentPiece != null) {
                     currentPiece.StopGrab(null);
-                    currentPiece.gameField.HideMove();
                     currentPiece = null;
                 }
             }

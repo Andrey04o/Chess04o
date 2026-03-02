@@ -21,41 +21,34 @@ namespace Andrey04o.Chess {
             }
         }
         void AddCellAttackPawn(Piece piece, bool checkEnPassant, Vector2Int dir, bool isRemove, bool isVisualMoving) {
-            if (checkEnPassant == false) {
-                piece.AddCellAttack(dir, isRemove, isVisualMoving);
-            } else {
+            if (isVisualMoving) {
+                piece.gameField.ShowEnPassant();
                 Cell cell = piece.GetCurrentCell().GetNeighbourByOffset(dir);
                 if (cell == null) return;
                 if (cell.pieceEnPassant != null) {
                     piece.gameField.AddMove(piece.gameField.enPassantCell);
                 }
+                if (cell.pieceCurrent != null) {
+                    piece.gameField.AddMove(cell, piece);
+                }
+            } else {
+                piece.AddCellAttack(dir, isRemove, isVisualMoving);
             }
-            
         }
         public override void ShowMove(Piece piece)
         {
+            base.ShowMove(piece);
             Cell cell;
-            for (int i = 0; i < piece.dir1Count; i++) {
-                cell = piece.gameField.cells[piece.dir1[i]];
-                if (cell.pieceCurrent != null || cell.pieceEnPassant != null) {
-                    if (cell.pieceCurrent.isBlack != piece.isBlack) {
-                        piece.gameField.AddMove(cell, piece); 
-                    }
-                }
-            }
             if (piece.isBlack) {
-                PawnMove(piece, new Vector2Int(0,1));
+                if (PawnMove(piece, new Vector2Int(0,1)) != null)
                 if (piece.isNotMoved == 0) {
                     PawnMove(piece, new Vector2Int(0,2));
                 }
             } else {
-                PawnMove(piece, new Vector2Int(0,-1));
+                if (PawnMove(piece, new Vector2Int(0,-1)) != null)
                 if (piece.isNotMoved == 0) {
                     PawnMove(piece, new Vector2Int(0,-2));
                 }
-            }
-            if (piece.gameField.ShowEnPassant()) {
-                CheckAttack(piece, true);
             }
         }
         
@@ -72,8 +65,8 @@ namespace Andrey04o.Chess {
         public override void PerformMove(Cell cell, Piece piece)
         {
             if (cell.pieceEnPassant != null) {
-                cell.pieceEnPassant.isCaptured = 1;
-                cell.pieceEnPassant.PerformCapture();
+                piece.gameField.AddChangedCell(cell.pieceEnPassant, cell.pieceEnPassant.GetCurrentCell());
+                piece.gameField.AddRemovePiece(cell.pieceEnPassant);
             }
             base.PerformMove(cell, piece);
             Cell cell1;

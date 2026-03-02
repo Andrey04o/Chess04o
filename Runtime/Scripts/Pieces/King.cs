@@ -82,52 +82,15 @@ namespace Andrey04o.Chess {
         bool castling = false;
         public override void PerformMove(Cell cell, Piece piece)
         {
-            if (isNotMoved == 0) {
+            if (piece.isNotMoved == 0) {
                 if (cell.castling == 0) return;
                 castling = true;
             }
             if (GetCastle(cell, out Piece castle, out Cell cellCastle)) {
-                Cell cellCastleOld = castle.GetCurrentCell();
-                Cell cellOld = piece.GetCurrentCell();
-                cellCastleOld.VectorGetPieces();
-                cellCastle.VectorGetPieces();
-                cellOld.VectorGetPieces();
-                cell.VectorGetPieces();
-                
-                piece.GetPiece().CalcAttack(piece, true);
-                cellCastleOld.VectorCalcAttack(true);
-                cellCastle.VectorCalcAttack(true);
-
-                piece.GetPiece().CalcAttack(piece, true);
-                cellOld.VectorCalcAttack(true);
-                cell.VectorCalcAttack(true);
-
-                piece.isNotMoved = 1;
-                castle.isNotMoved = 1;
-                
-                piece.positionPrevious = piece.position;
-                castle.positionPrevious = castle.position;
-                piece.gameField.cells[piece.position].pieceCurrent = null;
-                castle.gameField.cells[castle.position].pieceCurrent = null;
-                piece.position = cell.position;
-                castle.position = cellCastle.position;
-                
-                piece.gameField.HideMove();
-                piece.gameField.ChangeSide();
-
-                cell.PlacePiece(piece);
-                cellCastle.PlacePiece(castle);
-                piece.GetPiece().CalcAttack(piece, false);
-                cellOld.VectorCalcAttack(false);
-                cell.VectorCalcAttack(false);
-                castle.GetPiece().CalcAttack(piece, false);
-                cellCastleOld.VectorCalcAttack(false);
-                cellCastle.VectorCalcAttack(false);
+                piece.gameField.AddChangedCell(castle, cellCastle);
+                piece.gameField.AddChangePosition(castle, cellCastle);
             }
-            else {
-                base.PerformMove(cell, piece);
-            }
-
+            base.PerformMove(cell, piece);
         }
         bool GetCastle(Cell cell, out Piece castle, out Cell castleCell) {
             castle = null;
