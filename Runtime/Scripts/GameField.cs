@@ -81,8 +81,6 @@ namespace Andrey04o.Chess {
         public void AddMove(Cell cell, Piece piece, bool ignoreKingCheck = false) {
             //CheckKingSafe(cell, piece);
             //SetCellsToCheck2();
-            
-            Debug.Log("checksafe " + cellsNeedDefendCount2);
             if (cell.SetMove(piece, IsKingCheck(ignoreKingCheck),IsUnderAttack())) {
                 dirMove[dirMoveCount] = cell.position;
                 dirMoveCount++;
@@ -219,29 +217,24 @@ namespace Andrey04o.Chess {
             ResetChangedCell();
             ResetCellsCheck();
             ResetStalemate();
-            CheckStalemate();
             CheckKing();
+            CheckStalemate();
             PerformGameOver();
         }
         public void CheckStalemate() {
             //isStalemateCheck = true;
             countPossibleMoves = 0;
             Piece piece;
-            Debug.Log("===============");
             for (int i = 0; i < pieces.InTableAll.Length; i++) {
                 piece = pieces.InTableAll[i];
-                Debug.Log(piece.GetCurrentCell().name + " index " + i);
                 
                 if (IsHisTurn(piece) == false) {
-                    Debug.Log(piece.GetCurrentCell().name + "not his turn ");
                     continue;
                     }
                 if (piece.isCaptured == 1) {
-                    Debug.Log(piece.GetCurrentCell().name + "is captured ");
                     continue;
                     }
                 piece.ShowMove(piece);
-                Debug.Log(piece.GetCurrentCell().name + " endindex " + i);
                 if (dirMoveCount != 0) {
                     Debug.Log("no stalemate");
                     HideMove();
@@ -263,9 +256,6 @@ namespace Andrey04o.Chess {
         
             foreach (Piece king in pieces.allKings) {
                 if(king.GetCurrentCell().IsAttacking(king)) {
-                    if(isStalemate == 1) {
-                        isStalemate = 2;
-                    }
                     king.GetCurrentCell().VectorGetPieces(king, true);
                     
                     break;
@@ -339,6 +329,14 @@ namespace Andrey04o.Chess {
         }
         public void PerformGameOver() {
             if (isStalemate == 0) return;
+            foreach (Piece king in pieces.allKings) {
+                if(king.GetCurrentCell().IsAttacking(king)) {
+                    if(isStalemate == 1) {
+                        isStalemate = 2;
+                    }
+                    break;
+                }
+            }
             if (isStalemate == 1) {
                 Debug.Log("STALEMATE");
             } else {
