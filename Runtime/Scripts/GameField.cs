@@ -68,29 +68,25 @@ namespace Andrey04o.Chess {
             }
         }
         public void AddMove(Cell cell, bool ignoreKingCheck = false) {
-            if (isStalemateCheck) {
-                if (cell.CheckMove(true, IsKingCheck(ignoreKingCheck))) {
-                    countPossibleMoves++;
-                }
-                return;
-            }
             if (cell.SetMove(true, IsKingCheck(ignoreKingCheck), IsUnderAttack())) {
                 dirMove[dirMoveCount] = cell.position;
                 dirMoveCount++;
+                Debug.Log("addmove " + cell.name + " " + dirMoveCount);
             }
         }
         bool isKingBeDanger = false;
-        void CheckKingSafe(Cell cell, Piece piece) {
+        public void CheckKingSafe(Piece piece) {
             piece.GetCurrentCell().VectorCheckKing();
         }
         public void AddMove(Cell cell, Piece piece, bool ignoreKingCheck = false) {
-            CheckKingSafe(cell, piece);
-            SetCellsToCheck2();
+            //CheckKingSafe(cell, piece);
+            //SetCellsToCheck2();
             
             Debug.Log("checksafe " + cellsNeedDefendCount2);
             if (cell.SetMove(piece, IsKingCheck(ignoreKingCheck),IsUnderAttack())) {
                 dirMove[dirMoveCount] = cell.position;
                 dirMoveCount++;
+                Debug.Log("addmove " + cell.name + " " + dirMoveCount);
                 //PerformCheckIsKing(cell)
             }
         }
@@ -214,6 +210,7 @@ namespace Andrey04o.Chess {
         }
         public void MakeMove() {
             pieceAttackKing = byte.MaxValue;
+            isStalemate = 0;
             UpdateChangedCells(true);
             UpdateRemovePiece();
             UpdateChangePosition();
@@ -229,11 +226,22 @@ namespace Andrey04o.Chess {
         public void CheckStalemate() {
             //isStalemateCheck = true;
             countPossibleMoves = 0;
-            foreach(Piece piece in pieces.InTableAll) {
-                if (IsHisTurn(piece) == false) continue;
-                if (piece.isCaptured == 1) continue;
+            Piece piece;
+            Debug.Log("===============");
+            for (int i = 0; i < pieces.InTableAll.Length; i++) {
+                piece = pieces.InTableAll[i];
+                Debug.Log(piece.GetCurrentCell().name + " index " + i);
+                
+                if (IsHisTurn(piece) == false) {
+                    Debug.Log(piece.GetCurrentCell().name + "not his turn ");
+                    continue;
+                    }
+                if (piece.isCaptured == 1) {
+                    Debug.Log(piece.GetCurrentCell().name + "is captured ");
+                    continue;
+                    }
                 piece.ShowMove(piece);
-                Debug.Log(piece.GetCurrentCell().name);
+                Debug.Log(piece.GetCurrentCell().name + " endindex " + i);
                 if (dirMoveCount != 0) {
                     Debug.Log("no stalemate");
                     HideMove();
@@ -241,7 +249,7 @@ namespace Andrey04o.Chess {
                 }
             }
             isStalemate = 1;
-            Debug.Log("stalemate 1");
+            Debug.Log("stalemate 1, side " + indexSideTurn);
             isStalemateCheck = false;
             //ResetStalemate();
         }

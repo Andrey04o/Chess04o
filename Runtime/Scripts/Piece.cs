@@ -48,7 +48,8 @@ namespace Andrey04o.Chess {
             if (gameField.IsHisTurn(this) == false) return;
             handler.currentPiece = this;
             pieceGrab.StartGrab(handler.cursorController);
-            gameField.ResetCellsCheck2();
+            gameField.CheckKingSafe(this);
+            gameField.SetCellsToCheck2();
             GetPiece().ShowMove(this);
         }
         public void StopGrab(Cell cell) {
