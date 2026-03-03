@@ -18,6 +18,7 @@ namespace Andrey04o.Chess {
         [SerializeField] private float cellSize = 1f;
         [SerializeField] private float padding = 0.1f;
         List<Piece> piecesList = new List<Piece>();
+        List<Piece> kingsList = new List<Piece>();
         
         private Transform gridContainer;
         #if UNITY_EDITOR
@@ -90,6 +91,7 @@ namespace Andrey04o.Chess {
             PlaceChessPieces(gameField);
             
             pieces.InTableAll = piecesList.ToArray();
+            pieces.allKings = kingsList.ToArray();
             Debug.Log(pieces.InTableAll.Length);
             Debug.Log(piecesList.Count);
             EditorUtility.SetDirty(pieces);
@@ -164,6 +166,9 @@ namespace Andrey04o.Chess {
                 piece.positionPrevious = piece.position;
                 cell.PlacePiece(piece);
                 piece.isNotMoved = 0;
+                if (pieces.king == piecePrefab) {
+                    kingsList.Add(piece);
+                }
                 EditorUtility.SetDirty(cell);
                 EditorUtility.SetDirty(piece);
             }

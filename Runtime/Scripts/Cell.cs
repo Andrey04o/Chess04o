@@ -26,6 +26,7 @@ namespace Andrey04o.Chess {
         public MeshRenderer meshRenderer;
         [HideInInspector] public bool isCanMoveHere = false;
         [HideInInspector] public byte castling = 0;
+        [HideInInspector] public bool isCheck = false;
         public TextMeshPro text1;
         public TextMeshPro text2;
         public TextMeshPro text3;
@@ -150,7 +151,7 @@ namespace Andrey04o.Chess {
                 if (isAttack)
                     piece.gameField.AddMove(this, piece);
                 else
-                    SetMove(false);
+                    SetMove(false, piece.gameField.IsKingCheck());
                 return;
             }
             Debug.Log(isAttack + " " + attackByCount + " "+ this.name);
@@ -168,21 +169,29 @@ namespace Andrey04o.Chess {
             attackByCount = 0;
             attackByCountBlack = 0;
         }
-        public void SetMove(bool isCan) {
+        public bool SetMove(bool isCan, bool isKingCheck) {
             isCanMoveHere = isCan;
+            if (isCanMoveHere && isKingCheck) {
+                isCanMoveHere = isCheck;
+            }
             if (isCanMoveHere) {
                 SetMaterial(1);
             } else {
                 SetMaterial(0);
             }
+            return isCanMoveHere;
         }
-        public bool SetMove(Piece piece) {
+        public bool SetMove(Piece piece, bool isKingCheck) {
             isCanMoveHere = false;
             if (pieceCurrent == null) {
                 isCanMoveHere = true;
             } else if (pieceCurrent.isBlack != piece.isBlack){
                 isCanMoveHere = true;
             }
+            if (isCanMoveHere && isKingCheck) {
+                isCanMoveHere = isCheck;
+            }
+            
             if (isCanMoveHere) {
                 SetMaterial(1);
             } else {
@@ -275,7 +284,7 @@ namespace Andrey04o.Chess {
             }
             
         }
-        public void VectorGetPieces(Piece piece) {
+        public void VectorGetPieces(Piece piece, bool isKingCheck = false) {
             //meshRenderer.material = materialOrange;
             // Check if this cell has an attack vector
             text4.text = "0";
@@ -295,8 +304,10 @@ namespace Andrey04o.Chess {
                     neighbourCell = neighbourCell.GetNeighbourByOffset(negativeMovement);
                     if (neighbourCell == null) return; // impossible
                     //gameField.AddCellSliding(neighbourCell);
+                    if (isKingCheck) gameField.AddCellCheck(neighbourCell);
                     if (neighbourCell.pieceCurrent != null) break;
                 }
+                if (isKingCheck) return;
                 Piece neighbourPiece = neighbourCell.pieceCurrent;
                 if (neighbourPiece == piece) continue;
                 gameField.AddChangedCell(neighbourCell);

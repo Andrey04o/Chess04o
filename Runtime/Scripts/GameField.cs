@@ -23,6 +23,9 @@ namespace Andrey04o.Chess {
         public Piece[] piecesMove = new Piece[10];
         public Cell[] piecesMoveDestination = new Cell[10];
         public byte piecesMoveCount = 0;
+        public byte isKingCheck = 0;
+        public Cell[] cellsNeedDefend = new Cell[27];
+        public byte cellsNeedDefendCount = 0;
         
         public bool IsHisTurn(Piece piece) {
             if (indexSideTurn == 0) {
@@ -59,12 +62,13 @@ namespace Andrey04o.Chess {
             }
         }
         public void AddMove(Cell cell) {
-            cell.SetMove(true);
-            dirMove[dirMoveCount] = cell.position;
-            dirMoveCount++;
+            if (cell.SetMove(true, IsKingCheck() == true)) {
+                dirMove[dirMoveCount] = cell.position;
+                dirMoveCount++;
+            }
         }
         public void AddMove(Cell cell, Piece piece) {
-            if (cell.SetMove(piece) == true) {
+            if (cell.SetMove(piece, IsKingCheck()) == true) {
                 dirMove[dirMoveCount] = cell.position;
                 dirMoveCount++;
             }
@@ -82,7 +86,7 @@ namespace Andrey04o.Chess {
         }
         void ShowMove(Piece piece) {
             for(int i = 0; i < dirMoveCount; i++) {
-                cells[dirMove[i]].SetMove(piece);
+                cells[dirMove[i]].SetMove(piece, IsKingCheck());
             }
         }
         public void SetEnPassant(Piece piece) {
@@ -187,19 +191,46 @@ namespace Andrey04o.Chess {
             }
         }
         public void MakeMove() {
-            Debug.Log("UpdateChangedCells(true)");
             UpdateChangedCells(true);
-            Debug.Log("UpdateRemovePiece");
             UpdateRemovePiece();
-            Debug.Log("UpdateChangePosition");
             UpdateChangePosition();
-            Debug.Log("UpdateChangedCells");
             UpdateChangedCells(false);
-            Debug.Log("ChangeSide");
             ChangeSide();
-            Debug.Log("ResetChangedCell");
             ResetChangedCell();
+            ResetCellsCheck();
+            CheckKing();
         }
-
+        public void CheckKing() {
+            foreach (Piece piece in pieces.allKings) {
+                if(piece.GetCurrentCell().IsAttacking(piece)) {
+                    piece.GetCurrentCell().VectorGetPieces(piece, true);
+                    isKingCheck = 1;
+                    SetCellsToCheck();
+                    Debug.Log("CHECK");
+                    return;
+                }
+            }
+        }
+        public void AddCellCheck(Cell cell) {
+            cellsNeedDefend[cellsNeedDefendCount] = cell;
+            cellsNeedDefendCount++;
+        }
+        public void SetCellsToCheck() {
+            for (int i = 0; i < cellsNeedDefendCount; i++) {
+                cellsNeedDefend[i].isCheck = true;
+            }
+        }
+        public void ResetCellsCheck() {
+            for (int i = 0; i < cellsNeedDefendCount; i++) {
+                cellsNeedDefend[i].isCheck = false;
+            }
+            cellsNeedDefendCount = 0;
+            isKingCheck = 0;
+        }
+        public bool IsKingCheck() {
+            if (isKingCheck == 0) return false;
+            if (isKingCheck == 1) return true;
+            return false;
+        }
     }
 }

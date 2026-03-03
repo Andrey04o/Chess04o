@@ -26,6 +26,7 @@ namespace Andrey04o.Chess {
             if (cell != null) {
                 if (cell.IsAttacking(piece) == false) {
                     piece.AddCellAttack(dir, isRemove, isVisualMoving);
+                    piece.countPossibleMoves++;
                 }
             }
         }
@@ -38,18 +39,6 @@ namespace Andrey04o.Chess {
             //piece.gameField.
             CheckCastlingQueenside(piece);
             CheckCastlingKingside(piece);
-        }
-        public Cell CheckMove(Piece piece, Vector2Int dir) {
-            Cell cell = piece.GetCurrentCell().GetNeighbourByOffset(dir);
-            if (cell != null) {
-                if (cell.IsAttacking(piece) == false) {
-                    if (cell.pieceCurrent == null) {
-                        piece.gameField.AddMove(cell, piece);
-                        return cell;
-                    }
-                }
-            }
-            return null;
         }
         bool GetLeftEmpty(ref Cell cell) {
             cell = cell.GetLeft();

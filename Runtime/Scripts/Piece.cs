@@ -28,6 +28,7 @@ namespace Andrey04o.Chess {
         public byte isCaptured = 0;
         bool isMoved = false;
         public byte isCalculatedAttacks = 0;
+        public byte countPossibleMoves = 0;
         public Cell GetCurrentCell() {
             return gameField.cells[position];
         }

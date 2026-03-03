@@ -33,5 +33,6 @@ namespace Andrey04o.Chess {
                     return null;
             }
         }
+        public Piece[] allKings;
     }
 }
