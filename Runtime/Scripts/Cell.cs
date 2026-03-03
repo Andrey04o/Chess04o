@@ -113,40 +113,6 @@ namespace Andrey04o.Chess {
             
             return lineBelow.cells[index];
         }
-        /*
-        void PerformArray() {
-            if (attackBy.Length != attackByCount) {
-                byte[] newArray = new byte[attackByCount];
-                for (int i = 0; i < attackByCount && i < attackBy.Length; i++) {
-                    newArray[i] = attackBy[i];
-                }
-                attackBy = newArray;
-                Debug.Log("new array, " + attackBy.Length);
-            }
-        }
-        
-
-        public void SetAttack(Piece piece, bool isAttack) {
-            Debug.Log(name);
-            if (isAttack) {
-                attackByCount++;
-                PerformArray();
-                attackBy[attackByCount - 1] = piece.id;
-            } else {
-                int index = Array.IndexOf<byte>(attackBy, piece.id, 0, attackByCount);
-                Debug.Log(name + " " + index);
-                Debug.Log("Piece id " + piece.id + ", Cell attacked by ");
-                //if (index == -1) return;
-                foreach(Byte b in attackBy) {
-                    Debug.Log(b);
-                }
-                attackBy[index] = byte.MaxValue;
-                Array.Sort((Array)attackBy);
-                attackByCount--;
-                PerformArray();
-            }
-        }
-        */
         public void SetAttack(Piece piece, bool isAttack, bool isVisualMoving, bool ignoreKingCheck) {
             if (isVisualMoving) {
                 if (isAttack)
@@ -347,16 +313,20 @@ namespace Andrey04o.Chess {
                 neighbourCell.meshRenderer.material = materialOrange;
             }
         }
+        
         Piece GetKing(Vector2Int movement) {
                 // Find the king
                 Cell neighbourCell = this;
                 for(;;) {
                     neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
                     if (neighbourCell == null) return null; // impossible
+                    gameField.AddCellCheck2(neighbourCell);
                     if (neighbourCell.pieceCurrent != null) break;
                 }
                 Piece king = neighbourCell.pieceCurrent;
-                if (gameField.IsHisTurn(king) == false) return null;
+                if (gameField.IsHisTurn(king) == false) {
+                    return null;
+                }
                 if (king.GetPiece() == gameField.pieces.king) {
                     return king;
                 }
@@ -375,7 +345,10 @@ namespace Andrey04o.Chess {
                 // Find the king
                 
                 Piece king = GetKing(movement);
-                if (king == null) continue;
+                if (king == null) {
+                    gameField.ResetCellsCheck2();
+                    continue;
+                }
 
                 movement = movement * -1;
                 Cell neighbourCell = this;
@@ -394,6 +367,46 @@ namespace Andrey04o.Chess {
                 }
                 Debug.Log("resetnot, king in " + king.GetCurrentCell().name + " movement " + movement + " found piece " + neighbourCell.name);
             }
+        }
+        // Writed specially for a king
+        Piece GetEnemy(Vector2Int movement) {
+            // Find the king
+                Cell neighbourCell = this;
+                for(;;) {
+                    neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
+                    if (neighbourCell == null) return null;
+                    if (neighbourCell.pieceCurrent != null) break;
+                }
+                Piece enemy = neighbourCell.pieceCurrent;
+                if (pieceCurrent.isBlack != enemy.isBlack) {
+                    return enemy;
+                }
+                return null;
+        }
+        public Cell ContinueAttack() {
+            if (attackVector == 0) return null;
+            for (int bitPosition = 0; bitPosition < 8; bitPosition++) {
+                // Check if this direction has an attack vector
+                if ((attackVector & (1 << bitPosition)) == 0) continue;
+                
+                Vector2Int movement = GetDirectionFromBitPosition(bitPosition) * -1;
+                // Find the king
+                
+                Piece enemy = GetEnemy(movement);
+                if (enemy == null) {
+                    continue;
+                }
+
+                movement = movement * -1;
+                Cell neighbourCell = this;
+                for(;;) {
+                    neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
+                    if (neighbourCell == null) return null;
+                    return neighbourCell;
+                    if (neighbourCell.pieceCurrent != null) break;
+                }
+            }
+            return null; 
         }
         /*
         public void VectorCalcAttack(bool isRemove = false) {

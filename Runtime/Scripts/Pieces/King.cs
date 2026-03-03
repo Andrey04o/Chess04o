@@ -5,9 +5,11 @@ using UdonSharp;
 namespace Andrey04o.Chess {
     public class King : Piece
     {
+        Cell cellDanger;
         public override void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false)
         {
             base.CalcAttack(piece);
+            cellDanger = piece.GetCurrentCell().ContinueAttack();
             KingMove(piece, new Vector2Int(1,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(-1,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(1,-1), isRemove, isVisualMoving);
@@ -25,6 +27,9 @@ namespace Andrey04o.Chess {
             Cell cell = piece.GetCurrentCell().GetNeighbourByOffset(dir);
             if (cell != null) {
                 if (cell.IsAttacking(piece) == false) {
+                    if (cellDanger != null) {
+                        if (cell.position == cellDanger.position) return;
+                    }
                     piece.AddCellAttack(dir, isRemove, isVisualMoving, true);
                     piece.countPossibleMoves++;
                 }

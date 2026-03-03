@@ -286,7 +286,7 @@ namespace Andrey04o.Chess {
             cellsNeedDefend2[cellsNeedDefendCount2] = cell;
             cell.meshRenderer.material = cell.materialOrange;
             cellsNeedDefendCount2++;
-            //Debug.Log("ADD " + cell.name + " count " + cellsNeedDefendCount2);
+            Debug.Log("ADD " + cell.name + " count " + cellsNeedDefendCount2);
         }
         public void SetCellsToCheck() {
             for (int i = 0; i < cellsNeedDefendCount; i++) {
