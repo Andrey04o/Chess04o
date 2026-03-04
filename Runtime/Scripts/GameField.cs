@@ -34,6 +34,8 @@ namespace Andrey04o.Chess {
         public byte countPossibleMoves = 0;
         public bool isStalemateCheck = false;
         public byte isStalemate = 0;
+        public byte promotionPiece = byte.MaxValue;
+        public byte promotionDestination = byte.MaxValue;
         
         public bool IsHisTurn(Piece piece) {
             if (indexSideTurn == 0) {
@@ -189,6 +191,7 @@ namespace Andrey04o.Chess {
         }
         public void AddChangePosition(Piece piece, Cell destination) {
             //piecesMove[piecesMoveCount] = new PiecesMove();
+            Debug.Log("addchangepost");
             AddChangedCell(piece, piece.GetCurrentCell());
             AddChangedCell(piece, destination);
             piecesMove[piecesMoveCount]= piece;
@@ -214,6 +217,7 @@ namespace Andrey04o.Chess {
             UpdateChangedCells(true);
             UpdateRemovePiece();
             UpdateChangePosition();
+            UpdatePromotion();
             UpdateChangedCells(false);
             ChangeSide();
             ResetChangedCell();
@@ -361,6 +365,41 @@ namespace Andrey04o.Chess {
                 Debug.Log("STALEMATE");
             } else {
                 Debug.Log("CHECKMATE");
+            }
+        }
+        public void SetPromotion(Piece piece, byte destination) {
+            promotionPiece = piece.id;
+            promotionDestination = destination;
+        }
+        public void CancelPromotion() {
+            if (promotionPiece != byte.MaxValue)
+            pieces.InTableAll[promotionPiece].CancelPromotion();
+            promotionPiece = byte.MaxValue;
+        }
+        public void ConfirmPromotion(byte id) {
+            promotionNewType = id;
+            Piece piece = pieces.InTableAll[promotionPiece];
+            Cell cell = cells[promotionDestination];
+            if (cell.pieceCurrent != null) AddRemovePiece(cell.pieceCurrent);
+            AddChangePosition(piece, cell);
+            MakeMove();
+            //piece.GetPiece().PerformMove(cell,piece);
+            //piece.GetPiece().AfterMove(cell,piece);
+            promotionPiece = byte.MaxValue;
+        }
+        byte promotionNewType;
+        public void AddPromotion(Piece piece, byte newType) {
+            promotionPiece = piece.id;
+            promotionNewType = newType;
+        }
+        public void UpdatePromotion() {
+            if (promotionPiece != byte.MaxValue) {
+                Piece piece = pieces.InTableAll[promotionPiece];
+                //Cell currentCell = piece.GetCurrentCell();
+                piece.ChangeType(promotionNewType);
+                piece.ShowPromotion(false, byte.MaxValue);
+                //currentCell.GetNeighbour(forward*-1).PlacePieceLocal(this);
+                //gameField.ConfirmPromotion();
             }
         }
     }

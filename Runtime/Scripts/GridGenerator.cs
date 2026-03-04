@@ -94,6 +94,7 @@ namespace Andrey04o.Chess {
             pieces.allKings = kingsList.ToArray();
             Debug.Log(pieces.InTableAll.Length);
             Debug.Log(piecesList.Count);
+            gameField.promotionPiece = byte.MaxValue;
             EditorUtility.SetDirty(pieces);
             gameField.CalcAttacks();
             foreach(Cell cell in cells2) {
@@ -154,6 +155,13 @@ namespace Andrey04o.Chess {
             if (piece != null)
             {
                 piece.isBlack = isBlack;
+                if (isBlack) {
+                    piece.forward = new Vector2Int(0,1);
+                    piece.left = new Vector2Int(1,0);
+                } else {
+                    piece.forward = new Vector2Int(0,-1);
+                    piece.left = new Vector2Int(-1,0);
+                }
                 piece.transform.position = cell.positionPiece.transform.position;
                 cell.pieceCurrent = piece;
                 // Apply material to the visible model

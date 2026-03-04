@@ -14,6 +14,8 @@ namespace Andrey04o.Chess {
         public MeshFilter meshFilter;
         public byte indexType;
         public Vector3 offset;
+        public Vector2Int forward;
+        public Vector2Int left;
         public GameField gameField;
         public PieceGrab pieceGrab;
         public VRCPickup pickup;
@@ -29,6 +31,8 @@ namespace Andrey04o.Chess {
         bool isMoved = false;
         public byte isCalculatedAttacks = 0;
         public byte countPossibleMoves = 0;
+        public Promotion promotion;
+        public byte isShowPromotion;
         public Cell GetCurrentCell() {
             return gameField.cells[position];
         }
@@ -47,6 +51,7 @@ namespace Andrey04o.Chess {
         public void StartGrab(TileRaycastHandler handler) {
             if (gameField.IsHisTurn(this) == false) return;
             handler.currentPiece = this;
+            gameField.CancelPromotion();
             pieceGrab.StartGrab(handler.cursorController);
             gameField.CheckKingSafe(this);
             gameField.SetCellsToCheck2();
@@ -69,6 +74,30 @@ namespace Andrey04o.Chess {
             } else {
                 cell.PlacePiece(this);
             }
+        }
+        public void PromotionCheck() {
+            if (GetPiece() == gameField.pieces.pawn) {
+
+            }
+        }
+        public void ShowPromotion(bool value, byte destination) {
+            if (value == true) isShowPromotion = 1;
+            else isShowPromotion = 0;
+            gameField.SetPromotion(this, destination);
+            promotion.gameObject.SetActive(value);
+        }
+        public void CancelPromotion() {
+            ShowPromotion(false, byte.MaxValue);
+            GetCurrentCell().PlacePiece(this);
+            gameField.promotionPiece = byte.MaxValue;
+        }
+        public void ConfirmPromotion(byte id) {
+            Cell currentCell = GetCurrentCell();
+            //gameField.AddPromotion()
+            gameField.ConfirmPromotion(id);
+            
+            //currentCell.GetNeighbour(forward*-1).PlacePieceLocal(this);
+            
         }
         virtual public void PerformMove(Cell cell, Piece piece) {
             if (cell.pieceCurrent != null) {

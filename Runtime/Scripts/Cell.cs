@@ -44,6 +44,12 @@ namespace Andrey04o.Chess {
             piece.objectSync.transform.localPosition = piece.offset;
             piece.objectSync.TeleportTo(piece.objectSync.transform);
         }
+        public void PlacePieceLocal(Piece piece) {
+            pieceCurrent = piece;
+            piece.transform.parent = transform;
+            piece.transform.position = positionPiece.transform.position;
+            piece.objectSync.transform.localPosition = piece.offset;
+        }
 
         public Cell GetNeighbour(Vector2Int dir) {
             if (gameField == null) gameField = line.gameField;

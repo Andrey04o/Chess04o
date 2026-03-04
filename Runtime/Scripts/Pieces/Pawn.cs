@@ -12,13 +12,8 @@ namespace Andrey04o.Chess {
             CheckAttack(piece, false, isRemove, isVisualMoving);
         }
         void CheckAttack(Piece piece, bool checkEnPassant, bool isRemove = false, bool isVisualMoving = false) {
-            if (piece.isBlack) {
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(1,1), isRemove, isVisualMoving);
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(-1,1), isRemove, isVisualMoving);
-            } else {
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(1,-1), isRemove, isVisualMoving);
-                AddCellAttackPawn(piece, checkEnPassant, new Vector2Int(-1,-1), isRemove, isVisualMoving);
-            }
+            AddCellAttackPawn(piece, checkEnPassant, piece.forward+piece.left, isRemove, isVisualMoving);
+            AddCellAttackPawn(piece, checkEnPassant, piece.forward+piece.left*-1, isRemove, isVisualMoving);
         }
         void AddCellAttackPawn(Piece piece, bool checkEnPassant, Vector2Int dir, bool isRemove, bool isVisualMoving) {
             if (isVisualMoving) {
@@ -38,16 +33,9 @@ namespace Andrey04o.Chess {
         public override void ShowMove(Piece piece)
         {
             base.ShowMove(piece);
-            if (piece.isBlack) {
-                if (PawnMove(piece, new Vector2Int(0,1)) != null)
-                if (piece.isNotMoved == 0) {
-                    PawnMove(piece, new Vector2Int(0,2));
-                }
-            } else {
-                if (PawnMove(piece, new Vector2Int(0,-1)) != null)
-                if (piece.isNotMoved == 0) {
-                    PawnMove(piece, new Vector2Int(0,-2));
-                }
+            if (PawnMove(piece, piece.forward) != null)
+            if (piece.isNotMoved == 0) {
+                PawnMove(piece, piece.forward * 2);
             }
         }
         
@@ -63,28 +51,22 @@ namespace Andrey04o.Chess {
         }
         public override void PerformMove(Cell cell, Piece piece)
         {
+            if (cell.GetNeighbour(piece.forward) == null) {
+                piece.ShowPromotion(true, cell.position);
+                return;
+            }
             if (cell.pieceEnPassant != null) {
                 piece.gameField.AddRemovePiece(cell.pieceEnPassant);
             }
             base.PerformMove(cell, piece);
             Cell cell1;
             cell1 = piece.GetCurrentCellPrevious();
-            if (piece.isBlack) {
-                cell1 = cell1.GetUp();
-                if (cell1 == null) return;
-                cell1 = cell1.GetUp();
-                if (cell1 == null) return;
-                if (piece.GetCurrentCell().position == cell1.position) {
-                    piece.gameField.SetEnPassant(piece);
-                }
-            } else {
-                cell1 = cell1.GetDown();
-                if (cell1 == null) return;
-                cell1 = cell1.GetDown();
-                if (cell1 == null) return;
-                if (piece.GetCurrentCell().position == cell1.position) {
-                    piece.gameField.SetEnPassant(piece);
-                }
+            cell1 = cell1.GetNeighbour(piece.forward);
+            if (cell1 == null) return;
+            cell1 = cell1.GetNeighbour(piece.forward);
+            if (cell1 == null) return;
+            if (piece.GetCurrentCell().position == cell1.position) {
+                piece.gameField.SetEnPassant(piece);
             }
         }
     }
