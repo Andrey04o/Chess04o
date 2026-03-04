@@ -28,6 +28,7 @@ namespace Andrey04o.Chess {
         [HideInInspector] public byte castling = 0;
         [HideInInspector] public bool isCheck = false;
         [HideInInspector] public bool isCheck2 = false;
+        [HideInInspector] public bool isInAttack = false;
         public TextMeshPro text1;
         public TextMeshPro text2;
         public TextMeshPro text3;
@@ -258,6 +259,14 @@ namespace Andrey04o.Chess {
             }
             return false;
         }
+        public byte CountAttack(Piece piece) {
+            if (piece.isBlack) {
+                return attackByCount;
+            } else {
+                return attackByCountBlack;
+            }
+            return 0;
+        }
         public void SetAttackVector(Vector2Int dir, bool isAttack) {
             
             int bitPosition = GetBitPositionFromDirection(dir);
@@ -383,8 +392,8 @@ namespace Andrey04o.Chess {
                 }
                 return null;
         }
-        public Cell ContinueAttack() {
-            if (attackVector == 0) return null;
+        public void ContinueAttack() {
+            if (attackVector == 0) return;
             for (int bitPosition = 0; bitPosition < 8; bitPosition++) {
                 // Check if this direction has an attack vector
                 if ((attackVector & (1 << bitPosition)) == 0) continue;
@@ -399,14 +408,10 @@ namespace Andrey04o.Chess {
 
                 movement = movement * -1;
                 Cell neighbourCell = this;
-                for(;;) {
-                    neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
-                    if (neighbourCell == null) return null;
-                    return neighbourCell;
-                    if (neighbourCell.pieceCurrent != null) break;
-                }
+                neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
+                if (neighbourCell == null) continue;
+                gameField.AddCellInAttack(neighbourCell);
             }
-            return null; 
         }
         /*
         public void VectorCalcAttack(bool isRemove = false) {

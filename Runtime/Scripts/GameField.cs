@@ -26,8 +26,10 @@ namespace Andrey04o.Chess {
         public byte isKingCheck = 0;
         public Cell[] cellsNeedDefend = new Cell[27];
         public Cell[] cellsNeedDefend2 = new Cell[27];
+        public Cell[] cellsInAttack = new Cell[8];
         public byte cellsNeedDefendCount = 0;
         public byte cellsNeedDefendCount2 = 0;
+        public byte cellsInAttackCount = 0;
         public byte pieceAttackKing;
         public byte countPossibleMoves = 0;
         public bool isStalemateCheck = false;
@@ -253,14 +255,19 @@ namespace Andrey04o.Chess {
         public void CheckKing() {
             if (pieceAttackKing == byte.MaxValue) return;
             Piece piece = pieces.InTableAll[pieceAttackKing];
-        
+            byte attack;
             foreach (Piece king in pieces.allKings) {
-                if(king.GetCurrentCell().IsAttacking(king)) {
+                attack = king.GetCurrentCell().CountAttack(king);
+                if (attack > 1) {
+                    isKingCheck = 1; 
+                    return; // only king moves are possible
+                }
+                if (attack > 0) {
                     king.GetCurrentCell().VectorGetPieces(king, true);
-                    
                     break;
                 }
             }
+            
             AddCellCheck(piece.GetCurrentCell());
             isKingCheck = 1;
             
@@ -276,7 +283,10 @@ namespace Andrey04o.Chess {
             cellsNeedDefend2[cellsNeedDefendCount2] = cell;
             cell.meshRenderer.material = cell.materialOrange;
             cellsNeedDefendCount2++;
-            Debug.Log("ADD " + cell.name + " count " + cellsNeedDefendCount2);
+        }
+        public void AddCellInAttack(Cell cell) {
+            cellsInAttack[cellsInAttackCount] = cell;
+            cellsInAttackCount++;
         }
         public void SetCellsToCheck() {
             for (int i = 0; i < cellsNeedDefendCount; i++) {
@@ -285,8 +295,12 @@ namespace Andrey04o.Chess {
         }
         public void SetCellsToCheck2() {
             for (int i = 0; i < cellsNeedDefendCount2; i++) {
-                Debug.Log("cell2 " + cellsNeedDefend2[i].name);
                 cellsNeedDefend2[i].isCheck2 = true;
+            }
+        }
+        public void SetCellsInAttack() {
+            for (int i = 0; i < cellsInAttackCount; i++) {
+                cellsInAttack[i].isInAttack = true;
             }
         }
         public void ResetCellsCheck() {
@@ -302,6 +316,12 @@ namespace Andrey04o.Chess {
                 cellsNeedDefend2[i].isCheck2 = false;
             }
             cellsNeedDefendCount2 = 0;
+        }
+        public void ResetCellsInAttack() {
+            for (int i = 0; i < cellsInAttackCount; i++) {
+                cellsInAttack[i].isInAttack = false;
+            }
+            cellsInAttackCount = 0;
         }
         public void PerformCheckIsKing(Cell cell, Piece piece) {
             if (cell.pieceCurrent == null) return;

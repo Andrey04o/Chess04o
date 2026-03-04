@@ -9,7 +9,7 @@ namespace Andrey04o.Chess {
         public override void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false)
         {
             base.CalcAttack(piece);
-            cellDanger = piece.GetCurrentCell().ContinueAttack();
+            piece.GetCurrentCell().ContinueAttack();
             KingMove(piece, new Vector2Int(1,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(-1,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(1,-1), isRemove, isVisualMoving);
@@ -18,6 +18,7 @@ namespace Andrey04o.Chess {
             KingMove(piece, new Vector2Int(-1,0), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(0,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(0,-1), isRemove, isVisualMoving);
+            piece.gameField.ResetCellsInAttack();
         }
         void KingMove(Piece piece, Vector2Int dir, bool isRemove, bool isVisualMoving) {
             if (isVisualMoving == false) {
@@ -27,11 +28,10 @@ namespace Andrey04o.Chess {
             Cell cell = piece.GetCurrentCell().GetNeighbourByOffset(dir);
             if (cell != null) {
                 if (cell.IsAttacking(piece) == false) {
-                    if (cellDanger != null) {
-                        if (cell.position == cellDanger.position) return;
+                    if (cell.isInAttack == false) {
+                        piece.AddCellAttack(dir, isRemove, isVisualMoving, true);
+                        piece.countPossibleMoves++;
                     }
-                    piece.AddCellAttack(dir, isRemove, isVisualMoving, true);
-                    piece.countPossibleMoves++;
                 }
             }
         }
