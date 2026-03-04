@@ -33,6 +33,9 @@ namespace Andrey04o.Chess {
         public byte countPossibleMoves = 0;
         public Promotion promotion;
         public byte isShowPromotion;
+        public SpriteRenderer spriteRenderer;
+        public Sprite spriteWhite;
+        public Sprite spriteBlack;
         public Cell GetCurrentCell() {
             return gameField.cells[position];
         }
@@ -46,6 +49,8 @@ namespace Andrey04o.Chess {
                 offset = piece.offset;
                 meshRenderer.gameObject.transform.localPosition = offset;
                 this.indexType = indexType;
+                if (isBlack) spriteRenderer.sprite  = piece.spriteBlack;
+                else spriteRenderer.sprite = piece.spriteWhite;
             }
         }
         public void StartGrab(TileRaycastHandler handler) {
@@ -125,6 +130,7 @@ namespace Andrey04o.Chess {
             if (isCaptured == 1) {
                 //GetPiece().CalcAttack(this, true);
                 meshRenderer.enabled = false;
+                spriteRenderer.gameObject.SetActive(false);
                 GetCurrentCell().pieceCurrent = null;
                 //RemoveAttack();
             }
@@ -164,6 +170,22 @@ namespace Andrey04o.Chess {
         }
         public Piece GetPiece() {
             return gameField.pieces.GetPiece(indexType);
+        }
+        public void Set2DMode(bool value, Quaternion rotation) {
+            if (isCaptured == 0) {
+                spriteRenderer.gameObject.SetActive(value);
+                spriteRenderer.transform.rotation = rotation;
+                if (value == true) promotion.ChangeRotation(rotation);
+                else promotion.ResetRotation();
+                meshRenderer.enabled = !value;
+            }
+        }
+        public void Set2DMode(bool value) {
+            if (isCaptured == 0) {
+                spriteRenderer.gameObject.SetActive(value);
+                promotion.ResetRotation();
+                meshRenderer.enabled = !value;
+            }
         }
     }
 }

@@ -402,5 +402,15 @@ namespace Andrey04o.Chess {
                 //gameField.ConfirmPromotion();
             }
         }
+        public void Set2DView(bool value, Quaternion rotation) {
+            foreach(Piece piece in pieces.InTableAll) {
+                piece.Set2DMode(value, rotation);
+            }
+        }
+        public void Set2DView(bool value) {
+            foreach(Piece piece in pieces.InTableAll) {
+                piece.Set2DMode(value);
+            }
+        }
     }
 }

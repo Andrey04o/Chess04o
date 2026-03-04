@@ -56,10 +56,31 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7785844440394304783}
+  id: 0
   meshRenderer: {fileID: 2502053385374354546}
   meshFilter: {fileID: 523585896593380099}
   indexType: 4
   offset: {x: 0, y: 0.064, z: 0}
+  forward: {x: 0, y: 0}
+  left: {x: 0, y: 0}
+  gameField: {fileID: 0}
+  pieceGrab: {fileID: 0}
+  pickup: {fileID: 0}
+  objectSync: {fileID: 0}
+  position: 0
+  positionPrevious: 0
+  dir1: 000000000000000000000000000000000000000000000000000000
+  dir1Count: 0
+  isBlack: 0
+  isNotMoved: 0
+  isCaptured: 0
+  isCalculatedAttacks: 0
+  countPossibleMoves: 0
+  promotion: {fileID: 0}
+  isShowPromotion: 0
+  spriteRenderer: {fileID: 0}
+  spriteWhite: {fileID: 21300000, guid: 2b1df8c080485a545ab6995f98e71ffb, type: 3}
+  spriteBlack: {fileID: 21300000, guid: 16aa0709ccbee554dbc73d0a351a3c6c, type: 3}
 --- !u!114 &7785844440394304783
 MonoBehaviour:
   m_ObjectHideFlags: 0
