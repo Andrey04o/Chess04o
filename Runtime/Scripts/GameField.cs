@@ -6,7 +6,6 @@ using VRC.Udon.Common;
 using VRC.SDK3.UdonNetworkCalling;
 using Andrey04o.RaycastButton;
 using VRC.SDKBase;
-using YamlDotNet.Core.Tokens;
 namespace Andrey04o.Chess {
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class GameField : UdonSharpBehaviour
@@ -146,20 +145,6 @@ namespace Andrey04o.Chess {
             enPassantCell = cells[enPassantPiece.position];
             if (enPassantPiece.isBlack) enPassantCell = enPassantCell.GetNeighbour(Vector2Int.down);
             else enPassantCell = enPassantCell.GetNeighbour(Vector2Int.up);
-        }
-        //public void Get
-        public override void OnDeserialization()
-        {
-            base.OnDeserialization();
-            UnpackSyncData();
-            PerformEnPassant();
-            UpdatePromotion();
-            if (isStalemate == 0) return;
-            if (isStalemate == 1) {
-                Debug.Log("STALEMATE");
-            } else {
-                Debug.Log("CHECKMATE");
-            }
         }
         void AddCellChangedArray(Cell cell) {
             cellChanged[cellChangedCount] = cell;
@@ -499,7 +484,8 @@ namespace Andrey04o.Chess {
         {
             VRCPlayerApi owner = Networking.GetOwner(gameObject);
             float ownerLength = Vector3.Distance(owner.GetPosition(), ownerManager.transform.position);
-            if (ownerLength < ownerManager.transform.localScale.x * ownerManager.transform.lossyScale.x) return false;
+            Debug.Log("owner length " + ownerLength + " < " + ownerManager.transform.lossyScale.x);
+            if (ownerLength < ownerManager.transform.localScale.x) return false;
             float reqLength = Vector3.Distance(requestedOwner.GetPosition(), ownerManager.transform.position);
             return reqLength < ownerLength;
         }
@@ -508,6 +494,19 @@ namespace Andrey04o.Chess {
             base.OnOwnershipTransferred(player);
             ownerManager.currentOwner = player;
             ownerManager.text1.text = "Current owner " + player.displayName;
+        }
+        public override void OnDeserialization()
+        {
+            base.OnDeserialization();
+            UnpackSyncData();
+            PerformEnPassant();
+            UpdatePromotion();
+            if (isStalemate == 0) return;
+            if (isStalemate == 1) {
+                Debug.Log("STALEMATE");
+            } else {
+                Debug.Log("CHECKMATE");
+            }
         }
     }
 }

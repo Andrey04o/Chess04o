@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UdonSharp;
 using System;
+using VRC.SDKBase;
 namespace Andrey04o.Chess {
     public class Pawn : Piece
     {
@@ -59,6 +60,7 @@ namespace Andrey04o.Chess {
                 piece.gameField.AddRemovePiece(cell.pieceEnPassant);
             }
             base.PerformMove(cell, piece);
+            if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject) == false) return;
             Cell cell1;
             cell1 = piece.GetCurrentCellPrevious();
             cell1 = cell1.GetNeighbour(piece.forward);

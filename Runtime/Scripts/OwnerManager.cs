@@ -19,7 +19,7 @@ namespace Andrey04o.Chess {
             Networking.SetOwner(Networking.LocalPlayer, gameField.gameObject);
         }
         public void SetButtons(bool value) {
-            chessButtons.gameObject.SetActive(value);
+            chessButtons.Show(value);
         }
         public void SetTouchControls(bool value) {
             touchControls.gameObject.SetActive(value);

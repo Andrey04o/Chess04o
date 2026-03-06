@@ -86,12 +86,8 @@ namespace Andrey04o.Chess {
             gameField.ResetCellsCheck();
             if (cell != GetCurrentCell()) {
                 isMoved = true;
-                if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject)) {
-                    GetPiece().PerformMove(cell,this);
-                    GetPiece().AfterMove(cell,this);
-                } else {
-                    NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.PerformMoveNetwork), cell.position, this.id);
-                }
+                GetPiece().PerformMove(cell,this);
+                GetPiece().AfterMove(cell,this);
             } else {
                 cell.PlacePiece(this);
             }
@@ -122,6 +118,13 @@ namespace Andrey04o.Chess {
             }
         }
         virtual public void PerformMove(Cell cell, Piece piece) {
+            
+            if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject) == false) {
+                NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.PerformMoveNetwork), cell.position, this.id);
+                cell.PlacePiece(this);
+                return;
+            }
+            
             if (cell.pieceCurrent != null) {
                 piece.gameField.AddRemovePiece(cell.pieceCurrent);
             }
@@ -153,14 +156,7 @@ namespace Andrey04o.Chess {
                 if (isHost) GetCurrentCell().pieceCurrent = null;
                 //RemoveAttack();
             } else {
-                
-                if (is2DMode) {
-                    spriteRenderer.gameObject.SetActive(true);
-                } else {
-                    meshRenderer.enabled = true;
-                }
-                if(gameField.ownerManager.imIn)
-                    meshCollider.enabled = true;
+                ShowPiece(Quaternion.identity);
             }
         }
         public virtual void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false) {
@@ -228,13 +224,17 @@ namespace Andrey04o.Chess {
             if (isCaptured == 1) return;
             meshRenderer.enabled = true;
             meshCollider.enabled = true;
-            spriteRenderer.gameObject.SetActive(false);
-            rotationConstraint.ZeroConstraint();
+            if (gameField.is2DMode == false) {
+                spriteRenderer.gameObject.SetActive(false);
+                rotationConstraint.ZeroConstraint();
+            }
             promotion.ResetRotation();
             if (gameField.is2DMode) {
                 spriteRenderer.gameObject.SetActive(true);
-                rotationConstraint.ActivateConstraint();
-                promotion.ChangeRotation(rotation);
+                if (rotation != Quaternion.identity) {
+                    rotationConstraint.ActivateConstraint();
+                    promotion.ChangeRotation(rotation);
+                }
                 meshRenderer.enabled = false;
                 meshCollider.enabled = false;
             }
