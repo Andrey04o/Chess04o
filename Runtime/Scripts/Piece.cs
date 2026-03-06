@@ -68,7 +68,8 @@ namespace Andrey04o.Chess {
             if (handler != null) handler.currentPiece = this;
             gameField.CancelPromotion();
             if (handler != null) pieceGrab.StartGrab(handler.hitPosition);
-            gameField.CheckKingSafe(this);
+            gameField.CheckKing();
+            gameField.CheckKingSafe(this); // 2
             gameField.SetCellsToCheck2();
             GetPiece().ShowMove(this);
         }
@@ -82,6 +83,7 @@ namespace Andrey04o.Chess {
             pieceGrab.StopGrab();
             gameField.HideMove();
             gameField.ResetCellsCheck2();
+            gameField.ResetCellsCheck();
             if (cell != GetCurrentCell()) {
                 isMoved = true;
                 if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject)) {
@@ -89,8 +91,6 @@ namespace Andrey04o.Chess {
                     GetPiece().AfterMove(cell,this);
                 } else {
                     NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.PerformMoveNetwork), cell.position, this.id);
-                    //cell.PlacePieceLocal(this);
-                    //RequestSerialization();
                 }
             } else {
                 cell.PlacePiece(this);
@@ -113,12 +113,13 @@ namespace Andrey04o.Chess {
             gameField.promotionPiece = byte.MaxValue;
         }
         public void ConfirmPromotion(byte id) {
-            Cell currentCell = GetCurrentCell();
+            //Cell currentCell = GetCurrentCell();
             //gameField.AddPromotion()
-            gameField.ConfirmPromotion(id);
-            
-            //currentCell.GetNeighbour(forward*-1).PlacePieceLocal(this);
-            
+            if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject)) {
+                gameField.ConfirmPromotion(id);
+            } else {
+                NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.ConfirmPromotionNetwork), id);
+            }
         }
         virtual public void PerformMove(Cell cell, Piece piece) {
             if (cell.pieceCurrent != null) {

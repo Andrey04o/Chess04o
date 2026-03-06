@@ -150,6 +150,7 @@ namespace Andrey04o.Chess {
             base.OnDeserialization();
             UnpackSyncData();
             PerformEnPassant();
+            UpdatePromotion();
             if (isStalemate == 0) return;
             if (isStalemate == 1) {
                 Debug.Log("STALEMATE");
@@ -442,8 +443,6 @@ namespace Andrey04o.Chess {
             if (cell.pieceCurrent != null) AddRemovePiece(cell.pieceCurrent);
             AddChangePosition(piece, cell);
             MakeMove();
-            //piece.GetPiece().PerformMove(cell,piece);
-            //piece.GetPiece().AfterMove(cell,piece);
             promotionPiece = byte.MaxValue;
         }
         byte promotionNewType;
@@ -454,11 +453,8 @@ namespace Andrey04o.Chess {
         public void UpdatePromotion() {
             if (promotionPiece != byte.MaxValue) {
                 Piece piece = pieces.InTableAll[promotionPiece];
-                //Cell currentCell = piece.GetCurrentCell();
                 piece.ChangeType(promotionNewType);
                 piece.ShowPromotion(false, byte.MaxValue);
-                //currentCell.GetNeighbour(forward*-1).PlacePieceLocal(this);
-                //gameField.ConfirmPromotion();
             }
         }
         public void Set2DView(bool value, Quaternion rotation) {
@@ -474,7 +470,11 @@ namespace Andrey04o.Chess {
         [NetworkCallable] public void PerformMoveNetwork(byte cellId, byte pieceId) {
             Cell cell = cells[cellId];
             Piece piece = pieces.InTableAll[pieceId];
+            if (IsHisTurn(piece) == false) return;
             piece.GetPiece().PerformMove(cell, piece);
+        }
+        [NetworkCallable] public void ConfirmPromotionNetwork(byte id) {
+            ConfirmPromotion(id);
         }
         [NetworkCallable] public void AskAboutUpdate() {
             RequestSerialization();

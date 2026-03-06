@@ -10,6 +10,7 @@ namespace Andrey04o.Chess {
         {
             base.CalcAttack(piece);
             piece.GetCurrentCell().ContinueAttack();
+            piece.gameField.SetCellsInAttack();
             KingMove(piece, new Vector2Int(1,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(-1,1), isRemove, isVisualMoving);
             KingMove(piece, new Vector2Int(1,-1), isRemove, isVisualMoving);
