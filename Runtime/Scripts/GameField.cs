@@ -6,6 +6,7 @@ using VRC.Udon.Common;
 using VRC.SDK3.UdonNetworkCalling;
 using Andrey04o.RaycastButton;
 using VRC.SDKBase;
+using YamlDotNet.Core.Tokens;
 namespace Andrey04o.Chess {
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class GameField : UdonSharpBehaviour
@@ -44,6 +45,8 @@ namespace Andrey04o.Chess {
         public TileRaycastHandler tileRaycastHandler2;
         public OwnerManager ownerManager;
         public TouchControls touchControls;
+        public bool is2DMode;
+        public bool isTouchMode;
         
         public bool IsHisTurn(Piece piece) {
             if (indexSideTurn == 0) {
@@ -237,9 +240,11 @@ namespace Andrey04o.Chess {
             ChangeSide();
             ResetChangedCell();
             ResetCellsCheck();
+            isKingCheck = 0;
             CheckKing();
             CheckStalemate();
             PerformGameOver();
+            ResetCellsCheck();
             PackSyncData();
             RequestSerialization();
         }
@@ -372,7 +377,6 @@ namespace Andrey04o.Chess {
                 cellsNeedDefend[i].isCheck = false;
             }
             cellsNeedDefendCount = 0;
-            isKingCheck = 0;
         }
         public void ResetCellsCheck2() {
             Debug.Log(cellsNeedDefendCount2);
@@ -457,14 +461,9 @@ namespace Andrey04o.Chess {
                 piece.ShowPromotion(false, byte.MaxValue);
             }
         }
-        public void Set2DView(bool value, Quaternion rotation) {
+        public void ShowPieces(Quaternion rotation) {
             foreach(Piece piece in pieces.InTableAll) {
-                piece.Set2DMode(value, rotation);
-            }
-        }
-        public void Set2DView(bool value) {
-            foreach(Piece piece in pieces.InTableAll) {
-                piece.Set2DMode(value);
+                piece.ShowPiece(rotation);
             }
         }
         [NetworkCallable] public void PerformMoveNetwork(byte cellId, byte pieceId) {

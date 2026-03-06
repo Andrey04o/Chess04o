@@ -32,16 +32,13 @@ namespace Andrey04o.RaycastButton {
             if (inputMethod == VRCInputMethod.Touch) {
                 isEnabledTouchSupport = true;
                 canvas.SetActive(true);
-                foreach(Piece piece in gameField.pieces.InTableAll) {
-                    piece.meshCollider.enabled = false;
-                }
+                gameField.isTouchMode = true;
+                gameField.ShowPieces(Quaternion.identity);
             } else {
                 isEnabledTouchSupport = false;
                 canvas.SetActive(false);
-                foreach(Piece piece in gameField.pieces.InTableAll) {
-                    piece.meshCollider.enabled = true;
-                }
-                
+                gameField.isTouchMode = false;
+                gameField.ShowPieces(Quaternion.identity);
             }
             if (isEnabledTouchSupport)
                 chessButtons.textMeshTouchScreen.text = "Touch screen<br><color=#1f512b>On";

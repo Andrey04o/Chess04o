@@ -35,7 +35,11 @@ namespace Andrey04o.RaycastButton {
             station.UseStation(Networking.LocalPlayer);
             desktopControl.SetActive(true);
             DisableInteractive = true;
-            gameField.Set2DView(true, desktopControl.transform.rotation);
+            
+            gameField.isTouchMode = false;
+            gameField.is2DMode = true;
+            gameField.ShowPieces(desktopControl.transform.rotation);
+
             camera.enabled = true;
             isDesktopMode = true;
         }
@@ -44,7 +48,10 @@ namespace Andrey04o.RaycastButton {
             desktopControl.SetActive(false);
             station.ExitStation(Networking.LocalPlayer);
             DisableInteractive = false;
-            gameField.Set2DView(false);
+
+            gameField.is2DMode = false;
+            gameField.ShowPieces(Quaternion.identity);
+
             camera.enabled = false;
             isDesktopMode = false;
         }

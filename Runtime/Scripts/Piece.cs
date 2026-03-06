@@ -224,6 +224,23 @@ namespace Andrey04o.Chess {
                 meshRenderer.enabled = !value;
             }
         }
-        
+        public void ShowPiece(Quaternion rotation) {
+            if (isCaptured == 1) return;
+            meshRenderer.enabled = true;
+            meshCollider.enabled = true;
+            spriteRenderer.gameObject.SetActive(false);
+            rotationConstraint.ZeroConstraint();
+            promotion.ResetRotation();
+            if (gameField.is2DMode) {
+                spriteRenderer.gameObject.SetActive(true);
+                rotationConstraint.ActivateConstraint();
+                promotion.ChangeRotation(rotation);
+                meshRenderer.enabled = false;
+                meshCollider.enabled = false;
+            }
+            if (gameField.isTouchMode) {
+                meshRenderer.enabled = false;
+            }
+        }
     }
 }
