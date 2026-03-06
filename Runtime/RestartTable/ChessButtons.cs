@@ -22,6 +22,7 @@ namespace Andrey04o.Chess {
         public TouchControls touchControls;
         public InteractiveButtonChangeCamera interactiveButtonChangeCamera;
         public Button[] buttonsDesktop;
+        public GameObject aboutPage;
         public void Press() {
             if (gameField.isStalemate > 0) {
                 Restart();
@@ -64,6 +65,9 @@ namespace Andrey04o.Chess {
                 }
             }
             #endif
+        }
+        public void ToggleAbout() {
+            aboutPage.SetActive(!aboutPage.activeSelf);
         }
     }
 }

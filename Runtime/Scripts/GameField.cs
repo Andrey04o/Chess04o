@@ -37,7 +37,7 @@ namespace Andrey04o.Chess {
         public byte cellsNeedDefendCount = 0;
         public byte cellsNeedDefendCount2 = 0;
         public byte cellsInAttackCount = 0;
-        [UdonSynced] public byte pieceAttackKing;
+        [UdonSynced] public byte pieceAttackKing = byte.MaxValue;
         [UdonSynced] public byte isStalemate = 0;
         [UdonSynced] public byte promotionPiece = byte.MaxValue;
         [UdonSynced] public byte promotionDestination = byte.MaxValue;
@@ -470,7 +470,7 @@ namespace Andrey04o.Chess {
             indexSideTurn = 0;
             enPassant = byte.MaxValue;
             isKingCheck = 0;
-            pieceAttackKing = 0;
+            pieceAttackKing = byte.MaxValue;
             isStalemate = 0;
             promotionPiece = byte.MaxValue;
             promotionDestination = byte.MaxValue;

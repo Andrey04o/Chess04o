@@ -239,7 +239,7 @@ namespace Andrey04o.Chess {
                 meshCollider.enabled = false;
             }
             if (gameField.isTouchMode) {
-                meshRenderer.enabled = false;
+                meshCollider.enabled = false;
             }
         }
     }
