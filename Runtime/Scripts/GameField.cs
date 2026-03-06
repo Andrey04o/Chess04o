@@ -497,9 +497,9 @@ namespace Andrey04o.Chess {
         public override bool OnOwnershipRequest(VRCPlayerApi requestingPlayer, VRCPlayerApi requestedOwner)
         {
             VRCPlayerApi owner = Networking.GetOwner(gameObject);
-            float ownerLength = Vector3.Distance(owner.GetPosition(), transform.position);
-            if (ownerLength < 10f * transform.lossyScale.x) return false;
-            float reqLength = Vector3.Distance(requestedOwner.GetPosition(), transform.position);
+            float ownerLength = Vector3.Distance(owner.GetPosition(), ownerManager.transform.position);
+            if (ownerLength < ownerManager.transform.localScale.x * ownerManager.transform.lossyScale.x) return false;
+            float reqLength = Vector3.Distance(requestedOwner.GetPosition(), ownerManager.transform.position);
             return reqLength < ownerLength;
         }
         public override void OnOwnershipTransferred(VRCPlayerApi player)
