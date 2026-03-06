@@ -34,7 +34,8 @@ namespace Andrey04o.Chess {
         public RectTransform cursorTouch;
         public Camera cameraDesktop;
         public Canvas canvasDesktop;
-        public RestartButton restartButton;
+        public ChessButtons chessButtons;
+        public OwnerManager ownerManager;
         private Transform gridContainer;
         #if UNITY_EDITOR
         public void GenerateGrid()
@@ -143,18 +144,22 @@ namespace Andrey04o.Chess {
             cells2.Clear();
             touchControls.tileTouches = tileTouches.ToArray();
             touchControls.gameField = gameField;
+            gameField.touchControls = touchControls;
             EditorUtility.SetDirty(touchControls);
             cameraDesktop.orthographicSize = transform.lossyScale.x;
             float scale = 1 / transform.lossyScale.x;
             cameraDesktop.transform.localScale = new Vector3(scale, scale, scale);
             gameField.PackSyncData();
             gameField.syncDataOriginal = gameField.syncData;
+            gameField.ownerManager = ownerManager;
+            ownerManager.gameField = gameField;
             EditorUtility.SetDirty(gameField);
+            EditorUtility.SetDirty(ownerManager);
             EditorUtility.SetDirty(cameraDesktop);
             EditorUtility.SetDirty(interactiveButtonChangeCamera);
 
-            restartButton.gameField = gameField;
-            EditorUtility.SetDirty(restartButton);
+            chessButtons.gameField = gameField;
+            EditorUtility.SetDirty(chessButtons);
         }
         
         private void CreateButtonsAboveCells(GameField gameField)

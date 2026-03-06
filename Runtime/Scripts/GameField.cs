@@ -5,6 +5,7 @@ using UdonSharp;
 using VRC.Udon.Common;
 using VRC.SDK3.UdonNetworkCalling;
 using Andrey04o.RaycastButton;
+using VRC.SDKBase;
 namespace Andrey04o.Chess {
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class GameField : UdonSharpBehaviour
@@ -14,7 +15,7 @@ namespace Andrey04o.Chess {
         public Cell[] cells;
         [UdonSynced] public byte indexSideTurn = 0;
         byte[] dirMove = new byte[27];
-        byte dirMoveCount = 0;
+        public byte dirMoveCount = 0;
         [UdonSynced] byte enPassant = byte.MaxValue;
         [UdonSynced] public byte[] syncData = new byte[512];
         public byte[] syncDataOriginal = new byte[512];
@@ -41,6 +42,8 @@ namespace Andrey04o.Chess {
         [UdonSynced] public byte promotionDestination = byte.MaxValue;
         public TileRaycastHandler tileRaycastHandler;
         public TileRaycastHandler tileRaycastHandler2;
+        public OwnerManager ownerManager;
+        public TouchControls touchControls;
         
         public bool IsHisTurn(Piece piece) {
             if (indexSideTurn == 0) {
@@ -473,6 +476,9 @@ namespace Andrey04o.Chess {
             Piece piece = pieces.InTableAll[pieceId];
             piece.GetPiece().PerformMove(cell, piece);
         }
+        [NetworkCallable] public void AskAboutUpdate() {
+            RequestSerialization();
+        }
         public void RestartBoard() {
             indexSideTurn = 0;
             enPassant = byte.MaxValue;
@@ -486,6 +492,21 @@ namespace Andrey04o.Chess {
             }
             RequestSerialization();
             UnpackSyncData();
+        }
+
+        public override bool OnOwnershipRequest(VRCPlayerApi requestingPlayer, VRCPlayerApi requestedOwner)
+        {
+            VRCPlayerApi owner = Networking.GetOwner(gameObject);
+            float ownerLength = Vector3.Distance(owner.GetPosition(), transform.position);
+            if (ownerLength < 10f * transform.lossyScale.x) return false;
+            float reqLength = Vector3.Distance(requestedOwner.GetPosition(), transform.position);
+            return reqLength < ownerLength;
+        }
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
+        {
+            base.OnOwnershipTransferred(player);
+            ownerManager.currentOwner = player;
+            ownerManager.text1.text = "Current owner " + player.displayName;
         }
     }
 }

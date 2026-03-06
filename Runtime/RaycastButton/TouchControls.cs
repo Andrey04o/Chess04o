@@ -14,37 +14,39 @@ namespace Andrey04o.RaycastButton {
         public GameObject canvas;
         public bool isEnabledTouchSupport = true;
         bool isFirstTime = true;
+        public ChessButtons chessButtons;
         public void ShowTiles(bool value) {
             foreach (TileTouch tileTouch in tileTouches) {
                 tileTouch.gameObject.SetActive(value);
             }
         }
-        void Start() {
-            //ChangeMethod(VRC.SDKBase.InputManager.GetLastUsedInputMethod());
-            ChangeMethod(VRCInputMethod.Touch);
-            //Debug.Log(VRC.SDKBase.InputManager.GetLastUsedInputMethod());
-        }
-
-        public override void OnInputMethodChanged(VRCInputMethod inputMethod)
-        {
-            //ChangeMethod(inputMethod);
+        public void ChangeMethod(bool value) {
+            if (value == true) {
+                ChangeMethod(VRCInputMethod.Touch);
+            } else {
+                ChangeMethod(VRCInputMethod.Mouse);
+            }
         }
 
         public void ChangeMethod(VRCInputMethod inputMethod) {
             if (inputMethod == VRCInputMethod.Touch) {
-                    isEnabledTouchSupport = true;
-                    canvas.SetActive(true);
-                    foreach(Piece piece in gameField.pieces.InTableAll) {
-                        piece.meshCollider.enabled = false;
-                    }
+                isEnabledTouchSupport = true;
+                canvas.SetActive(true);
+                foreach(Piece piece in gameField.pieces.InTableAll) {
+                    piece.meshCollider.enabled = false;
+                }
             } else {
-                    isEnabledTouchSupport = false;
-                    canvas.SetActive(false);
-                    foreach(Piece piece in gameField.pieces.InTableAll) {
-                        piece.meshCollider.enabled = true;
-                    }
+                isEnabledTouchSupport = false;
+                canvas.SetActive(false);
+                foreach(Piece piece in gameField.pieces.InTableAll) {
+                    piece.meshCollider.enabled = true;
+                }
                 
             }
+            if (isEnabledTouchSupport)
+                chessButtons.textMeshTouchScreen.text = "Touch screen<br><color=#1f512b>On";
+            else
+                chessButtons.textMeshTouchScreen.text = "Touch screen<br><color=#d00000>Off";
         }
     }
 }

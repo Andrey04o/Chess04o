@@ -152,12 +152,14 @@ namespace Andrey04o.Chess {
                 if (isHost) GetCurrentCell().pieceCurrent = null;
                 //RemoveAttack();
             } else {
+                
                 if (is2DMode) {
                     spriteRenderer.gameObject.SetActive(true);
                 } else {
                     meshRenderer.enabled = true;
                 }
-                meshCollider.enabled = true;
+                if(gameField.ownerManager.imIn)
+                    meshCollider.enabled = true;
             }
         }
         public virtual void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false) {

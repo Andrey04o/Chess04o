@@ -117,16 +117,20 @@ namespace Andrey04o.RaycastButton {
         }
 
         public void MouseUp() {
+            Debug.Log("mouseup");
             if (_currentHoveredTile != null) {
+                Debug.Log("_currentHoveredTile.OnRaycastMouseUp(this);");
                 _currentHoveredTile.OnRaycastMouseUp(this);
                 currentPiece = null;
             } else if (_lastHoveredTile != null) {
+                Debug.Log("_lastHoveredTile.OnRaycastExit();");
                 _lastHoveredTile.OnRaycastExit();
                 _lastHoveredTile = null;
             }
             _currentHoveredTile = null;
 
             if (currentPiece != null) {
+                Debug.Log("currentPiece.StopGrab(null);");
                 currentPiece.StopGrab(null);
                 currentPiece = null;
             }

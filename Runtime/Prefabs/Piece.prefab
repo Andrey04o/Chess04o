@@ -181,7 +181,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -320,6 +320,8 @@ MonoBehaviour:
   spriteBlack: {fileID: 0}
   rotationConstraint: {fileID: 8670100968189546769}
   is2DMode: 0
+  originalPosition: 0
+  originalIndexType: 0
 --- !u!114 &2975501696403139160
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ using Andrey04o.Chess;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using VRC.SDK3.Components;
+using VRC.SDK3.Dynamics.Constraint.Components;
 namespace Andrey04o.RaycastButton {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class InteractiveButtonChangeCamera : UdonSharpBehaviour
@@ -15,43 +16,46 @@ namespace Andrey04o.RaycastButton {
         public GameObject desktopControl;
         public Camera camera;
         public GameField gameField;
-        public override void Interact()
-        {
-            base.Interact();
+        public GameObject blockerInteraction;
+        bool isDesktopMode;
+        Quaternion rotation;
+        Vector3 rotationEuler;
+        public void Enter(bool side) {
+            gameField.touchControls.ChangeMethod(false);
+            rotation = camera.transform.localRotation;
+            rotationEuler = rotation.eulerAngles;
+            if (side) rotationEuler.y = 180;
+            else rotationEuler.y = 0;
+            rotation.eulerAngles = rotationEuler;
+            camera.transform.localRotation = rotation;
+
+            station.transform.position = Networking.LocalPlayer.GetPosition();
+            blockerInteraction.gameObject.SetActive(true);
+            blockerInteraction.transform.position = Networking.LocalPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head).position;
             station.UseStation(Networking.LocalPlayer);
             desktopControl.SetActive(true);
             DisableInteractive = true;
             gameField.Set2DView(true, desktopControl.transform.rotation);
             camera.enabled = true;
+            isDesktopMode = true;
         }
-
         public void Leave() {
+            blockerInteraction.gameObject.SetActive(false);
             desktopControl.SetActive(false);
             station.ExitStation(Networking.LocalPlayer);
             DisableInteractive = false;
             gameField.Set2DView(false);
             camera.enabled = false;
+            isDesktopMode = false;
+        }
+        public override void OnPlayerRespawn(VRCPlayerApi player)
+        {
+            base.OnPlayerRespawn(player);
+            if (isDesktopMode == true) {
+                Leave();
+            }
         }
 
-        public void TestInterr() {
-            Debug.Log("DRAGG WTF");
-            //Debug.Log("WTF " + baseEventData.currentInputModule.input.compositionCursorPos);
-        }
         
-        public void TestSelect() {
-            Debug.Log("SELECT WTF");
-        }
-        public void VectorTest() {
-            Debug.Log("vector ");
-        }
-        public void TestBegindrag() {
-            Debug.Log("BEGINDRAG ");
-        }
-        public void TestEnddrag() {
-            Debug.Log("ENDDRAG ");
-        }
-        public void TestPointerdown() {
-            Debug.Log("pointerdown ");
-        }
     }
 }

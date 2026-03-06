@@ -11,18 +11,23 @@ namespace Andrey04o.RaycastButton {
         public Cell cell;
         public ScrollRect scrollRect;
         public RectTransform cursor;
+        bool isDrag = false;
         public void StartDrag() {
+            if (isDrag) return; //this method for some reason invokes 3 times
+            isDrag = true;
             cursor.transform.position = transform.position;
             raycastHandler.gameObject.SetActive(true);
             cell.OnRaycastClick();
             cell.OnRaycastDrag(raycastHandler);
-            Debug.Log("stargDrag");
+            Debug.Log("stargDrag " + name);
         }
         public void Drag() {
             //Debug.Log("Drag" + scrollRect.velocity + " " + scrollRect.content.position);
         }
         public void StopDrag() {
-            cell.OnRaycastDrag(raycastHandler);
+            if (!isDrag) return;
+            isDrag = false;
+            //cell.OnRaycastDrag(raycastHandler);
             raycastHandler.MouseUp();
             raycastHandler.gameObject.SetActive(false);
             Debug.Log("stopDrag");
