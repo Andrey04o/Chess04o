@@ -35,8 +35,7 @@ namespace Andrey04o.Chess {
         }
 
         public void Restart() {
-            Networking.SetOwner(Networking.LocalPlayer, gameField.gameObject);
-            gameField.RestartBoard();
+            NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.RestartBoardRemote));
         }
 
         public void Resync() {

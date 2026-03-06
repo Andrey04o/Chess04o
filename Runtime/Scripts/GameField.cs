@@ -466,18 +466,6 @@ namespace Andrey04o.Chess {
                 piece.ShowPiece(rotation);
             }
         }
-        [NetworkCallable] public void PerformMoveNetwork(byte cellId, byte pieceId) {
-            Cell cell = cells[cellId];
-            Piece piece = pieces.InTableAll[pieceId];
-            if (IsHisTurn(piece) == false) return;
-            piece.GetPiece().PerformMove(cell, piece);
-        }
-        [NetworkCallable] public void ConfirmPromotionNetwork(byte id) {
-            ConfirmPromotion(id);
-        }
-        [NetworkCallable] public void AskAboutUpdate() {
-            RequestSerialization();
-        }
         public void RestartBoard() {
             indexSideTurn = 0;
             enPassant = byte.MaxValue;
@@ -492,7 +480,21 @@ namespace Andrey04o.Chess {
             RequestSerialization();
             UnpackSyncData();
         }
-
+        [NetworkCallable] public void PerformMoveNetwork(byte cellId, byte pieceId) {
+            Cell cell = cells[cellId];
+            Piece piece = pieces.InTableAll[pieceId];
+            if (IsHisTurn(piece) == false) return;
+            piece.GetPiece().PerformMove(cell, piece);
+        }
+        [NetworkCallable] public void ConfirmPromotionNetwork(byte id) {
+            ConfirmPromotion(id);
+        }
+        [NetworkCallable] public void AskAboutUpdate() {
+            RequestSerialization();
+        }
+        [NetworkCallable] public void RestartBoardRemote() {
+            RestartBoard();
+        }
         public override bool OnOwnershipRequest(VRCPlayerApi requestingPlayer, VRCPlayerApi requestedOwner)
         {
             VRCPlayerApi owner = Networking.GetOwner(gameObject);
