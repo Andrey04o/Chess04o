@@ -15,10 +15,13 @@ namespace Andrey04o.Chess {
     public class Piece : UdonSharpBehaviour
     {
         public byte id;
+        public byte indexType; //synced
+        public byte position; //synced
+        public byte isNotMoved = 0; //synced
+        public byte isCaptured = 0; //synced
         public MeshRenderer meshRenderer;
         public MeshFilter meshFilter;
         public MeshCollider meshCollider;
-        public byte indexType; //s
         public Vector3 offset;
         public Vector2Int forward;
         public Vector2Int left;
@@ -26,19 +29,14 @@ namespace Andrey04o.Chess {
         public PieceGrab pieceGrab;
         public VRCPickup pickup;
         public VRCObjectSync objectSync;
-        public byte position; //s
         public byte positionPrevious;
         public bool isBlack = false;
-        public byte isNotMoved = 0; //s
-        public byte isCaptured = 0; //s
-        bool isMoved = false;
+        public bool isMoved = false;
         public byte isCalculatedAttacks = 0;
         public byte countPossibleMoves = 0;
         public Promotion promotion;
         public byte isShowPromotion;
         public SpriteRenderer spriteRenderer;
-        public Sprite spriteWhite;
-        public Sprite spriteBlack;
         public VRCRotationConstraint rotationConstraint;
         public bool is2DMode = false;
         public byte originalPosition = 0;
@@ -53,21 +51,19 @@ namespace Andrey04o.Chess {
         public void ChangeType(byte indexType) {
             if (isCaptured == 1) return;
             if (indexTypePrevious == indexType) return;
-            Piece piece = gameField.pieces.GetPiece(indexType);
-            if (piece != null) {
-                meshFilter.sharedMesh = piece.meshFilter.sharedMesh;
-                meshCollider.sharedMesh = piece.meshFilter.sharedMesh;
-                offset = piece.offset;
+            MoveSet moveSet = gameField.pieces.GetPiece(indexType);
+            if (moveSet != null) {
+                meshFilter.sharedMesh = moveSet.meshFilter.sharedMesh;
+                meshCollider.sharedMesh = moveSet.meshFilter.sharedMesh;
+                offset = moveSet.offset;
                 meshRenderer.gameObject.transform.localPosition = offset;
                 this.indexType = indexType;
                 indexTypePrevious = indexType;
-                if (isBlack) spriteRenderer.sprite  = piece.spriteBlack;
-                else spriteRenderer.sprite = piece.spriteWhite;
+                if (isBlack) spriteRenderer.sprite  = moveSet.spriteBlack;
+                else spriteRenderer.sprite = moveSet.spriteWhite;
             }
         }
         public void StartGrab(TileRaycastHandler handler) {
-            //if (Networking.IsOwner(Networking.LocalPlayer, gameObject) == false)
-            //    Networking.SetOwner(Networking.LocalPlayer, this.gameObject);
             if (gameField.IsHisTurn(this) == false) return;
             if (handler != null) handler.currentPiece = this;
             gameField.CancelPromotion();
@@ -113,33 +109,11 @@ namespace Andrey04o.Chess {
             gameField.promotionPiece = byte.MaxValue;
         }
         public void ConfirmPromotion(byte id) {
-            //Cell currentCell = GetCurrentCell();
-            //gameField.AddPromotion()
             if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject)) {
                 gameField.ConfirmPromotion(id);
             } else {
                 NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.ConfirmPromotionNetwork), id, gameField.promotionPiece, gameField.promotionDestination);
                 gameField.UpdatePromotion();
-            }
-        }
-        virtual public void PerformMove(Cell cell, Piece piece) {
-            
-            if (Networking.IsOwner(Networking.LocalPlayer, piece.gameField.gameObject) == false) {
-                NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)piece.gameField, NetworkEventTarget.Owner, nameof(GameField.PerformMoveNetwork), cell.position, piece.id);
-                cell.PlacePiece(piece);
-                return;
-            }
-            
-            if (cell.pieceCurrent != null) {
-                piece.gameField.AddRemovePiece(cell.pieceCurrent);
-            }
-            piece.gameField.AddChangePosition(piece, cell);
-
-            piece.gameField.MakeMove();
-        }
-        virtual public void AfterMove(Cell cell, Piece piece) {
-            if (piece.isMoved == true) {
-                piece.isMoved = false;
             }
         }
         public void PlacePiece(Cell cell) {
@@ -154,18 +128,13 @@ namespace Andrey04o.Chess {
 
         public void PerformCapture(bool isHost = true) {
             if (isCaptured == 1) {
-                //GetPiece().CalcAttack(this, true);
                 meshRenderer.enabled = false;
                 meshCollider.enabled = false;
                 spriteRenderer.gameObject.SetActive(false);
                 if (isHost) GetCurrentCell().pieceCurrent = null;
-                //RemoveAttack();
             } else {
                 ShowPiece(Quaternion.identity);
             }
-        }
-        public virtual void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false) {
-
         }
         public void AddAttack(Cell cell, bool isRemove = false, bool isVisualMoving = false, bool ignoreKingCheck = false) {
             cell.SetAttack(this, !isRemove, isVisualMoving, ignoreKingCheck);
@@ -173,9 +142,6 @@ namespace Andrey04o.Chess {
         public void AddAttack(Cell cell, Vector2Int dir, bool isRemove = false, bool isVisualMoving = false, bool ignoreKingCheck = false) {
             cell.SetAttack(this, !isRemove, isVisualMoving, ignoreKingCheck);
             if (isVisualMoving == false) cell.SetAttackVector(dir, !isRemove);
-        }
-        virtual public void RemoveAttack(Piece piece) {
-            piece.GetPiece().CalcAttack(piece, false);
         }
         public void AddCellAttack(Vector2Int dir, bool isRemove = false, bool isVisualMoving = false, bool ignoreKingCheck = false) {
             Cell cell = GetCurrentCell().GetNeighbourByOffset(dir);
@@ -186,25 +152,16 @@ namespace Andrey04o.Chess {
         public void AddSlidingCellAttack(Vector2Int dir, bool isRemove = false, bool isVisualMoving = false, bool ignoreKingCheck = false) {
             Cell[] cells = GetCurrentCell().GetSlidingCells(dir);
             foreach (Cell cell in cells) {
-                //dir2[dir1Count] = dir;
                 AddAttack(cell, dir, isRemove, isVisualMoving, ignoreKingCheck);
-                //cell.SetAttackVector(dir, true);
             }
         }
-        virtual public void ShowMove(Piece piece) {
-            piece.GetPiece().CalcAttack(piece, false, true);
-            //for (int i = 0; i < piece.dir1Count; i++) {
-            //    piece.gameField.AddMove(piece.gameField.cells[piece.dir1[i]], piece);
-            //}
-        }
-        public Piece GetPiece() {
+        public MoveSet GetPiece() {
             return gameField.pieces.GetPiece(indexType);
         }
         public void Set2DMode(bool value, Quaternion rotation) {
             is2DMode = value;
             if (isCaptured == 0) {
                 spriteRenderer.gameObject.SetActive(value);
-                //spriteRenderer.transform.rotation = rotation;
                 if (value == true) {
                     rotationConstraint.ActivateConstraint();
                     promotion.ChangeRotation(rotation);

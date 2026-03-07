@@ -15,7 +15,7 @@ namespace Andrey04o.Chess {
         public Material materialWhite;
         public Material materialBlack;
         public Piece[] InTableAll;
-        public Piece GetPiece(byte index) {
+        public MoveSet GetPiece(byte index) {
             switch (index)
             {
                 case 1:

@@ -5,7 +5,7 @@ using UdonSharp;
 using System;
 using VRC.SDKBase;
 namespace Andrey04o.Chess {
-    public class Pawn : Piece
+    public class Pawn : MoveSet
     {
         public override void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false)
         {
@@ -57,8 +57,8 @@ namespace Andrey04o.Chess {
                 return;
             }
             if (Networking.IsOwner(Networking.LocalPlayer, piece.gameField.gameObject)) {
-                if (cell == gameField.enPassantCell) {
-                    piece.gameField.AddRemovePiece(gameField.enPassantPiece);
+                if (cell == piece.gameField.enPassantCell) {
+                    piece.gameField.AddRemovePiece(piece.gameField.enPassantPiece);
                 }
             }
             base.PerformMove(cell, piece);

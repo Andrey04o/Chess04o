@@ -252,7 +252,7 @@ namespace Andrey04o.Chess {
             }
         }
         
-        private void PlacePiece(GameField gameField,Piece piecePrefab, Cell cell, Material material, bool isBlack)
+        private void PlacePiece(GameField gameField, MoveSet piecePrefab, Cell cell, Material material, bool isBlack)
         {
             if (piecePrefab == null || cell == null) return;
             //PrefabUtility.GetPrefabObject(piecePrefab)

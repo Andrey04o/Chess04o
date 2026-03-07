@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UdonSharp;
 namespace Andrey04o.Chess {
-    public class King : Piece
+    public class King : MoveSet
     {
         Cell cellDanger;
         public override void CalcAttack(Piece piece, bool isRemove = false, bool isVisualMoving = false)

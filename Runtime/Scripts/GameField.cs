@@ -14,10 +14,13 @@ namespace Andrey04o.Chess {
         public Line[] lines;
         public Cell[] cells;
         [UdonSynced] public byte indexSideTurn = 0;
-        byte[] dirMove = new byte[27];
-        public byte dirMoveCount = 0;
         [UdonSynced] byte enPassant = byte.MaxValue;
         [UdonSynced] public byte[] syncData = new byte[512];
+        [UdonSynced] public byte isKingCheck = 0;
+        [UdonSynced] public byte pieceAttackKing = byte.MaxValue;
+        [UdonSynced] public byte isStalemate = 0;
+        byte[] dirMove = new byte[27];
+        public byte dirMoveCount = 0;
         public byte[] syncDataOriginal = new byte[512];
         public Piece enPassantPiece;
         public Cell enPassantCell;
@@ -29,15 +32,12 @@ namespace Andrey04o.Chess {
         public Piece[] piecesMove = new Piece[10];
         public Cell[] piecesMoveDestination = new Cell[10];
         public byte piecesMoveCount = 0;
-        [UdonSynced] public byte isKingCheck = 0;
         public Cell[] cellsNeedDefend = new Cell[27];
         public Cell[] cellsNeedDefend2 = new Cell[27];
         public Cell[] cellsInAttack = new Cell[8];
         public byte cellsNeedDefendCount = 0;
         public byte cellsNeedDefendCount2 = 0;
         public byte cellsInAttackCount = 0;
-        [UdonSynced] public byte pieceAttackKing = byte.MaxValue;
-        [UdonSynced] public byte isStalemate = 0;
         public byte promotionPiece = byte.MaxValue;
         public byte promotionDestination = byte.MaxValue;
         public TileRaycastHandler tileRaycastHandler;
@@ -47,7 +47,6 @@ namespace Andrey04o.Chess {
         public bool is2DMode;
         public bool isTouchMode;
         public VisualInterface visualInterface;
-        
         public bool IsHisTurn(Piece piece) {
             if (indexSideTurn == 0) {
                 if (piece.isBlack == false) {
@@ -297,7 +296,7 @@ namespace Andrey04o.Chess {
                 if (piece.isCaptured == 1) {
                     continue;
                     }
-                piece.ShowMove(piece);
+                piece.GetPiece().ShowMove(piece);
                 if (dirMoveCount != 0) {
                     Debug.Log("no stalemate");
                     HideMove();
