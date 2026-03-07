@@ -90,9 +90,9 @@ namespace Andrey04o.Chess {
         bool castling = false;
         public override void PerformMove(Cell cell, Piece piece)
         {
+            if (piece.isNotMoved == 0) {
             CheckCastlingKingside(piece, false);
             CheckCastlingQueenside(piece, false);
-            if (piece.isNotMoved == 0) {
                 if (cell.castling != 0)
                     castling = true;
             }

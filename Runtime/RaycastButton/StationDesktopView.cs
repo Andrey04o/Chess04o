@@ -10,9 +10,10 @@ using VRC.SDK3.Components;
 using VRC.SDK3.Dynamics.Constraint.Components;
 namespace Andrey04o.RaycastButton {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class InteractiveButtonChangeCamera : UdonSharpBehaviour
+    public class StationDesktopView : UdonSharpBehaviour
     {
         public VRC.SDK3.Components.VRCStation station;
+        public VRC.SDK3.Components.VRCStation stationBlack;
         public GameObject desktopControl;
         public Camera camera;
         public GameField gameField;
@@ -20,7 +21,10 @@ namespace Andrey04o.RaycastButton {
         bool isDesktopMode;
         Quaternion rotation;
         Vector3 rotationEuler;
+        public Settings settings;
+        bool currentSide;
         public void Enter(bool side) {
+            currentSide = side;
             gameField.touchControls.ChangeMethod(false);
             rotation = camera.transform.localRotation;
             rotationEuler = rotation.eulerAngles;
@@ -28,11 +32,14 @@ namespace Andrey04o.RaycastButton {
             else rotationEuler.y = 0;
             rotation.eulerAngles = rotationEuler;
             camera.transform.localRotation = rotation;
-
-            station.transform.position = Networking.LocalPlayer.GetPosition();
+            //station.transform.position = Networking.LocalPlayer.GetPosition();
+            //station.transform.eulerAngles = new Vector3 (0f, Networking.LocalPlayer.GetRotation().eulerAngles.y, 0f);
             blockerInteraction.gameObject.SetActive(true);
             blockerInteraction.transform.position = Networking.LocalPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head).position;
-            station.UseStation(Networking.LocalPlayer);
+            Networking.LocalPlayer.Immobilize(true);
+            if (!side) station.UseStation(Networking.LocalPlayer);
+            else stationBlack.UseStation(Networking.LocalPlayer);
+            settings.Show(true, side);
             desktopControl.SetActive(true);
             DisableInteractive = true;
             
@@ -46,7 +53,10 @@ namespace Andrey04o.RaycastButton {
         public void Leave() {
             blockerInteraction.gameObject.SetActive(false);
             desktopControl.SetActive(false);
-            station.ExitStation(Networking.LocalPlayer);
+            Networking.LocalPlayer.Immobilize(false);
+            if (!currentSide) station.ExitStation(Networking.LocalPlayer);
+            else stationBlack.ExitStation(Networking.LocalPlayer);
+            settings.Show(false);
             DisableInteractive = false;
 
             gameField.is2DMode = false;
@@ -62,7 +72,5 @@ namespace Andrey04o.RaycastButton {
                 Leave();
             }
         }
-
-        
     }
 }

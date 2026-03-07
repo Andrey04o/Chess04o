@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UdonSharp;
 using TMPro;
+using Andrey04o.RaycastButton;
 namespace Andrey04o.Chess {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 
@@ -16,13 +17,14 @@ namespace Andrey04o.Chess {
         public TextMeshProUGUI textMeshArrowWhite;
         Quaternion quaternion;
         Vector3 rotation;
+        public Settings settings;
         public void ShowTurn(bool isBlack) {
             quaternion = arrowTurnBlack.transform.rotation;
                 rotation = quaternion.eulerAngles;
             if (isBlack) {
-                rotation.z = 90;
+                rotation.z = 180;
             } else {
-                rotation.z = 90;
+                rotation.z = -180;
             }
             quaternion.eulerAngles = rotation;
             arrowTurnBlack.transform.rotation = quaternion;
@@ -35,6 +37,7 @@ namespace Andrey04o.Chess {
                 textMeshArrowBlack.text = "White turn";
                 textMeshArrowWhite.text = "Your turn";
             }
+            settings.ChandeSide(isBlack);
         }
 
         public void ShowWinnerWindow(byte stalemate, bool isBlack = true) {

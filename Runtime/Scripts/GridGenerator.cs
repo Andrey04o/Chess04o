@@ -21,7 +21,7 @@ namespace Andrey04o.Chess {
         [SerializeField] private float padding = 0.1f;
         List<Piece> piecesList = new List<Piece>();
         List<Piece> kingsList = new List<Piece>();
-        public InteractiveButtonChangeCamera interactiveButtonChangeCamera;
+        public StationDesktopView stationDesktopView;
         public Material materialBlack;
         public Material materialWhite;
         public TileTouch tileTouchPrefab;
@@ -56,7 +56,7 @@ namespace Andrey04o.Chess {
             pieces.transform.SetParent(gameField.transform);
             pieces.gameObject.SetActive(false);
             gameField.pieces = pieces;
-            interactiveButtonChangeCamera.gameField = gameField;
+            stationDesktopView.gameField = gameField;
             Vector3 cellPosition = new Vector3(0, 0, 0);
             List<Cell> cells = new List<Cell>();
             List<Cell> cells2 = new List<Cell>();
@@ -156,7 +156,7 @@ namespace Andrey04o.Chess {
             EditorUtility.SetDirty(gameField);
             EditorUtility.SetDirty(ownerManager);
             EditorUtility.SetDirty(cameraDesktop);
-            EditorUtility.SetDirty(interactiveButtonChangeCamera);
+            EditorUtility.SetDirty(stationDesktopView);
 
             chessButtons.gameField = gameField;
             EditorUtility.SetDirty(chessButtons);
@@ -272,8 +272,8 @@ namespace Andrey04o.Chess {
                     piece.promotion.rotation.eulerAngles = new Vector3(0, 0, 0); 
                 }
                 piece.promotion.transform.localRotation = piece.promotion.rotation;
-                piece.rotationConstraint.Sources.Add(new VRC.Dynamics.VRCConstraintSource(interactiveButtonChangeCamera.desktopControl.transform, 1f));
-                piece.promotion.rotationConstraint.Sources.Add(new VRC.Dynamics.VRCConstraintSource(interactiveButtonChangeCamera.desktopControl.transform, 1f));
+                piece.rotationConstraint.Sources.Add(new VRC.Dynamics.VRCConstraintSource(stationDesktopView.desktopControl.transform, 1f));
+                piece.promotion.rotationConstraint.Sources.Add(new VRC.Dynamics.VRCConstraintSource(stationDesktopView.desktopControl.transform, 1f));
                 piece.transform.position = cell.positionPiece.transform.position;
                 cell.pieceCurrent = piece;
                 // Apply material to the visible model

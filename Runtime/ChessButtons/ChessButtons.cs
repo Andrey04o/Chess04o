@@ -20,8 +20,8 @@ namespace Andrey04o.Chess {
         public TextMeshProUGUI textUpdate;
         public TextMeshProUGUI textMeshTouchScreen;
         public TouchControls touchControls;
-        public InteractiveButtonChangeCamera interactiveButtonChangeCamera;
-        public Button[] buttonsDesktop;
+        public StationDesktopView stationDesktopView;
+        public Station[] stations;
         public GameObject aboutPage;
         public void Press() {
             if (gameField.isStalemate > 0) {
@@ -49,18 +49,18 @@ namespace Andrey04o.Chess {
             touchControls.ChangeMethod(!touchControls.isEnabledTouchSupport);
         }
         public void DesktopModeWhite() {
-            interactiveButtonChangeCamera.Enter(false);
+            stationDesktopView.Enter(false);
         }
         public void DesktopModeBlack() {
-            interactiveButtonChangeCamera.Enter(true);
+            stationDesktopView.Enter(true);
         }
         public void Show(bool value) {
             gameObject.SetActive(value);
             #if UNITY_STANDALONE
             if (value == true) {
                 if (Networking.LocalPlayer.IsUserInVR() == false) {
-                    foreach(Button button in buttonsDesktop) {
-                        button.gameObject.SetActive(true);
+                    foreach(Station station in stations) {
+                        station.ShowButton();
                     }
                 }
             }
