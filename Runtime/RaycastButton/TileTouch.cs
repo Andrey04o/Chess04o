@@ -19,7 +19,6 @@ namespace Andrey04o.RaycastButton {
             raycastHandler.gameObject.SetActive(true);
             cell.OnRaycastClick();
             cell.OnRaycastDrag(raycastHandler);
-            Debug.Log("stargDrag " + name);
         }
         public void Drag() {
             //Debug.Log("Drag" + scrollRect.velocity + " " + scrollRect.content.position);
@@ -30,7 +29,6 @@ namespace Andrey04o.RaycastButton {
             //cell.OnRaycastDrag(raycastHandler);
             raycastHandler.MouseUp();
             raycastHandler.gameObject.SetActive(false);
-            Debug.Log("stopDrag");
         }
     }
 }

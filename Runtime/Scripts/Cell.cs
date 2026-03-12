@@ -35,9 +35,8 @@ namespace Andrey04o.Chess {
         Piece[] piecesVector = new Piece[8];
         public byte piecesVectorCount;
         public byte isCalculatedAttacks = 0;
-        public void PlacePiece(Piece piece) {
-            //gameField.cells[piece.position].pieceCurrent = null;
-            pieceCurrent = piece;
+        public void PlacePiece(Piece piece,  bool setPieceCurrent = true) {
+            if (setPieceCurrent) pieceCurrent = piece;
             piece.transform.parent = transform;
             piece.transform.position = positionPiece.transform.position;
             Quaternion rotation = piece.objectSync.transform.localRotation;
@@ -46,8 +45,8 @@ namespace Andrey04o.Chess {
             piece.objectSync.transform.localPosition = piece.offset;
             piece.objectSync.TeleportTo(piece.objectSync.transform);
         }
-        public void PlacePieceLocal(Piece piece) {
-            pieceCurrent = piece;
+        public void PlacePieceLocal(Piece piece, bool setPieceCurrent = true) {
+            if (setPieceCurrent) pieceCurrent = piece;
             piece.transform.parent = transform;
             piece.transform.position = positionPiece.transform.position;
             piece.objectSync.transform.localPosition = piece.offset;

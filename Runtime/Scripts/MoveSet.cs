@@ -22,7 +22,7 @@ namespace Andrey04o.Chess {
                 piece.gameField.RememberMove(cell.position, piece.id);
                 NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)piece.gameField, NetworkEventTarget.Owner, nameof(GameField.PerformMoveNetwork), cell.position, piece.id);
                 Networking.SetOwner(Networking.LocalPlayer, piece.gameField.gameObject);
-                cell.PlacePiece(piece);
+                cell.PlacePiece(piece, false);
                 return;
             }
             

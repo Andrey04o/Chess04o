@@ -32,6 +32,7 @@ namespace Andrey04o.Chess {
         public byte positionPrevious;
         public bool isBlack = false;
         public bool isMoved = false;
+        public bool isLocked = false;
         public byte isCalculatedAttacks = 0;
         public byte countPossibleMoves = 0;
         public Promotion promotion;
@@ -44,6 +45,7 @@ namespace Andrey04o.Chess {
         public byte indexTypePrevious = 0;
         public AudioSource audioSource;
         public void EnablePickup(bool value) {
+            isLocked = value;
             if (value == false) {
                 pickup.Drop();
                 meshCollider.enabled = false;
@@ -223,8 +225,15 @@ namespace Andrey04o.Chess {
             if (gameField.isTouchMode) {
                 meshCollider.enabled = false;
             }
+            if (gameField.IsCanUse(this) == false) {
+                meshCollider.enabled = false;
+            }
         }
         public void ShowCollider() {
+            if (gameField.IsCanUse(this) == false) {
+                meshCollider.enabled = false;
+                return;
+            }
             if (isCaptured == 0) {
                 meshCollider.enabled = true;
                 if (gameField.is2DMode) {

@@ -13,19 +13,22 @@ namespace Andrey04o.Chess {
         public TextMeshProUGUI textMeshWinner;
         public GameObject arrowTurnBlack;
         public GameObject arrowTurnWhite;
+        public GameObject arrowTurnBlackDown;
+        public GameObject arrowTurnWhiteDown;
         public TextMeshProUGUI textMeshArrowBlack;
         public TextMeshProUGUI textMeshArrowWhite;
-        public Quaternion quaternionUp;
-        public Quaternion quaternionDown;
-        Vector3 rotation;
         public DesktopControls desktopControls;
         public void ShowTurn(bool isBlack) {
             if (isBlack) {
-                arrowTurnBlack.transform.rotation = quaternionDown;
-                arrowTurnWhite.transform.rotation = quaternionDown;
+                arrowTurnBlackDown.SetActive(true);
+                arrowTurnBlack.SetActive(false);
+                arrowTurnWhiteDown.SetActive(true);
+                arrowTurnWhite.SetActive(false);
             } else {
-                arrowTurnBlack.transform.rotation = quaternionUp;
-                arrowTurnWhite.transform.rotation = quaternionUp;
+                arrowTurnBlackDown.SetActive(false);
+                arrowTurnBlack.SetActive(true);
+                arrowTurnWhiteDown.SetActive(false);
+                arrowTurnWhite.SetActive(true);
             }
 
             if (isBlack) {

@@ -7,8 +7,8 @@ namespace Andrey04o.Chess {
     public class TimerRepeatMove : UdonSharpBehaviour
     {
         public GameField gameField;
-        public float timeToRepeat = 1f;
-        float timeToRepeatCurrent = 1f;
+        public float timeToRepeat = 3f;
+        float timeToRepeatCurrent = 3f;
         float timer = 0f;
         public void StartTimer() {
             gameObject.SetActive(true);
@@ -28,8 +28,8 @@ namespace Andrey04o.Chess {
         void PerformTimer() {
             timer += Time.deltaTime;
             if (timer >= timeToRepeatCurrent) {
+                StopTimer();
                 gameField.PerformRepeatMove();
-                RestartTimer();
             }
         }
     }

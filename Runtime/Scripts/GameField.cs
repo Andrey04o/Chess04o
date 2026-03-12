@@ -559,6 +559,7 @@ namespace Andrey04o.Chess {
         public void ShowPieces(Quaternion rotation) {
             foreach(Piece piece in pieces.InTableAll) {
                 piece.ShowPiece(rotation);
+                //if (!IsCanUse(piece)) piece.meshCollider = false;
             }
         }
         public void RestartBoard() {
