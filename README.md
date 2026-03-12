@@ -52,3 +52,11 @@ A Chess game made for VRChat using UdonSharp
 
 [itch.io](https://andrey04o.itch.io/)
 
+## Used content
+
+[Low Poly Chess Pack](https://brokenvector.itch.io/low-poly-chess-pack) by Broken Vector
+
+[Low Poly Chess Set](https://lowpolyassets.itch.io/low-poly-chess-set) by LowPolyAssets
+
+[Colorful Chess Pieces](https://opengameart.org/content/colorful-chess-pieces) by Arsonide
+
