@@ -1,7 +1,6 @@
 
-# Chess04o
-![Chess04o image](https://github.com/Andrey04o/Chess04o-vpm/blob/main/Chess04o.png?raw=true)
-A Tetris parody game made for VRChat using UdonSharp
+# ![Chess04o image](https://github.com/Andrey04o/Chess04o-vpm/blob/main/Chess04o.png?raw=true)
+A Chess game made for VRChat using UdonSharp
 
 ![TETR04o arcade machine](https://github.com/Andrey04o/Chess04o-vpm/blob/main/screenshot1.png?raw=true)
 
@@ -15,9 +14,9 @@ A Tetris parody game made for VRChat using UdonSharp
 - Lock button to prevent other players pick up pieces
 - VR, PC, Touch control
 - 2D desktop mode
-- Sounds
 ![Desktop mode image](https://github.com/Andrey04o/Chess04o-vpm/blob/main/screenshot2.png?raw=true)
 ![Desktop mode image2](https://github.com/Andrey04o/Chess04o-vpm/blob/main/screenshot3.png?raw=true)
+- Sounds
 - Castling
 - En passant
 - Synchronization with other players
@@ -39,9 +38,9 @@ A Tetris parody game made for VRChat using UdonSharp
 
 # How to use
 
-1. Find in the `Prefabs` folder Chess04o prefab
+1. Find in the `Prefabs` folder a Chess04o prefab
 
-2. Drag and drop to your world
+2. Drag and drop it to your world
 
 ## Developed by Andrey04o
 
