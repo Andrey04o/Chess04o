@@ -21,6 +21,8 @@ namespace Andrey04o.Chess {
         [UdonSynced] public byte isStalemate = 0;
         [UdonSynced] public byte idPreviousPositionMoved;
         [UdonSynced] public byte idPositionMoved;
+        [UdonSynced] byte move = 0;
+        byte _move = 0;
         byte[] dirMove = new byte[27];
         public byte dirMoveCount = 0;
         public byte[] syncDataOriginal = new byte[512];
@@ -36,12 +38,17 @@ namespace Andrey04o.Chess {
         public byte piecesMoveCount = 0;
         public Cell[] cellsNeedDefend = new Cell[27];
         public Cell[] cellsNeedDefend2 = new Cell[27];
+        public Cell[] cellsNeedDefend2All = new Cell[27];
         public Cell[] cellsInAttack = new Cell[8];
         public byte cellsNeedDefendCount = 0;
         public byte cellsNeedDefendCount2 = 0;
+        public byte cellsNeedDefendCount2All = 0;
         public byte cellsInAttackCount = 0;
         public byte promotionPiece = byte.MaxValue;
         public byte promotionDestination = byte.MaxValue;
+        byte _promotionId = byte.MaxValue;
+        byte _promotionPiece = byte.MaxValue;
+        byte _promotionDestination = byte.MaxValue;
         public TileRaycastHandler tileRaycastHandler;
         public TileRaycastHandler tileRaycastHandler2;
         public OwnerManager ownerManager;
@@ -60,9 +67,12 @@ namespace Andrey04o.Chess {
         public Settings settings;
         public Locker lockerBlack;
         public Locker lockerWhite;
+        public TimerRepeatMove timerRepeatMove;
         Piece pieceAttackKingPiece;
         Cell cellPreviousPositionMoved;
         Cell cellPositionMoved;
+        byte cellRemembered;
+        byte pieceRemembered;
         public void GrabPiece(Piece piece, bool isVR = false) {
             Debug.Log("grabpiece");
             if (isPiecePickedUp) return;
@@ -306,6 +316,9 @@ namespace Andrey04o.Chess {
             DrawCellPreviousPosition();
             DrawCellPosition();
             DrawCellAttackKing();
+
+            move++;
+            move = (byte)(move % 255);
             RequestSerialization();
         }
         
@@ -413,6 +426,10 @@ namespace Andrey04o.Chess {
             cellsNeedDefend2[cellsNeedDefendCount2] = cell;
             cellsNeedDefendCount2++;
         }
+        public void AddCellCheck2All(Cell cell) {
+            cellsNeedDefend2All[cellsNeedDefendCount2All] = cell;
+            cellsNeedDefendCount2All++;
+        }
         public void AddCellInAttack(Cell cell) {
             cellsInAttack[cellsInAttackCount] = cell;
             cellsInAttackCount++;
@@ -444,6 +461,19 @@ namespace Andrey04o.Chess {
                 cellsNeedDefend2[i].isCheck2 = false;
             }
             cellsNeedDefendCount2 = 0;
+        }
+        
+        public void ResetCellsCheck2All() {
+            //Debug.Log(cellsNeedDefendCount2);
+            //for (int i = 0; i < cellsNeedDefendCount2; i++) {
+            //    cellsNeedDefend2[i].isCheck2 = false;
+            //}
+            cellsNeedDefendCount2All = 0;
+        }
+        public void AddFromCellCheck2AllToCellCheck2() {
+            for (int i = 0; i < cellsNeedDefendCount2All; i++) {
+                AddCellCheck2(cellsNeedDefend2All[i]);
+            }
         }
         public void ResetCellsInAttack() {
             for (int i = 0; i < cellsInAttackCount; i++) {
@@ -565,6 +595,7 @@ namespace Andrey04o.Chess {
         public void DrawCellPreviousPosition() {
             if (cellPreviousPositionMoved != null) {
                 cellPreviousPositionMoved.RestoreColor();
+                cellPreviousPositionMoved = null;
             }
             if (idPreviousPositionMoved != byte.MaxValue) {
                 cellPreviousPositionMoved = cells[idPreviousPositionMoved];
@@ -574,6 +605,7 @@ namespace Andrey04o.Chess {
         public void DrawCellPosition() {
             if (cellPositionMoved != null) {
                 cellPositionMoved.RestoreColor();
+                cellPositionMoved = null;
             }
             if (idPositionMoved != byte.MaxValue) {
                 cellPositionMoved = cells[idPositionMoved];
@@ -595,6 +627,42 @@ namespace Andrey04o.Chess {
                 } else {
                     piece.ShowCollider();
                 }
+            }
+        }
+        public void RememberMove(byte cell, byte piece) {
+            cellRemembered = cell;
+            pieceRemembered = piece;
+            _move++;
+            _move = (byte)(_move % 255);
+            timerRepeatMove.StartTimer();
+            //SendCustomEventDelayedSeconds()
+        }
+        public void RememberPromotion(byte id, byte promotionPiece, byte promotionDestination) {
+            _promotionId = id;
+            //pieceRemembered = id;
+            _promotionPiece = promotionPiece;
+            _promotionDestination = promotionDestination;
+            _move++;
+            _move = (byte)(_move % 255);
+            timerRepeatMove.StartTimer();
+        }
+        public void PerformRepeatMove() {
+            if (_promotionPiece != byte.MaxValue) {
+                PerformRepeatPromotion();
+                return;
+            }
+            if (_move != move) {
+                Piece piece = pieces.InTableAll[pieceRemembered];
+                Cell cell = cells[cellRemembered];
+                piece.GetPiece().PerformMove(cell, piece);
+            }
+        }
+        public void PerformRepeatPromotion() {
+            if (_move != move) {
+                this.promotionPiece = _promotionPiece;
+                this.promotionDestination = _promotionDestination;
+                Piece piece = pieces.InTableAll[_promotionPiece];
+                piece.ConfirmPromotion(_promotionId);
             }
         }
         [NetworkCallable] public void PerformMoveNetwork(byte cellId, byte pieceId) {
@@ -642,6 +710,10 @@ namespace Andrey04o.Chess {
             DrawCellPreviousPosition();
             DrawCellPosition();
             DrawCellAttackKing();
+
+            _move = move;
+            promotionPiece = byte.MaxValue;
+            timerRepeatMove.StopTimer();
         }
     }
 }

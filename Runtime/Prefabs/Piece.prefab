@@ -210,6 +210,7 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 1581804613707714408}
   piece: {fileID: 1838851047398545144}
   cellCurrent: {fileID: 0}
+  isGrab: 0
 --- !u!114 &1581804613707714408
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,7 +363,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 41b707648c132f444829bd4fae425c38, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

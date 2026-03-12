@@ -46,8 +46,12 @@ namespace Andrey04o.Chess {
         public void EnablePickup(bool value) {
             if (value == false) {
                 pickup.Drop();
+                meshCollider.enabled = false;
+            } else {
+                ShowCollider();
             }
-            pickup.enabled = value;
+            
+            //pickup.enabled = value;
         }
         public Cell GetCurrentCell() {
             return gameField.cells[position];
@@ -125,7 +129,9 @@ namespace Andrey04o.Chess {
             if (Networking.IsOwner(Networking.LocalPlayer, gameField.gameObject)) {
                 gameField.ConfirmPromotion(id);
             } else {
+                gameField.RememberPromotion(id, gameField.promotionPiece, gameField.promotionDestination);
                 NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)gameField, NetworkEventTarget.Owner, nameof(GameField.ConfirmPromotionNetwork), id, gameField.promotionPiece, gameField.promotionDestination);
+                Networking.SetOwner(Networking.LocalPlayer, gameField.gameObject);
                 gameField.UpdatePromotion();
             }
         }

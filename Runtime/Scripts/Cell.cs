@@ -336,23 +336,34 @@ namespace Andrey04o.Chess {
         }
         
         Piece GetKing(Vector2Int movement) {
-                // Find the king
-                Cell neighbourCell = this;
-                for(;;) {
-                    neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
-                    if (neighbourCell == null) return null; // impossible
-                    gameField.AddCellCheck2(neighbourCell);
-                    if (neighbourCell.pieceCurrent != null) break;
-                }
-                Piece king = neighbourCell.pieceCurrent;
-                if (gameField.IsHisTurn(king) == false) {
-                    return null;
-                }
-                if (king.GetPiece() == gameField.pieces.king) {
-                    return king;
-                }
+            // Find the king
+            Cell neighbourCell = this;
+            for(;;) {
+                neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
+                if (neighbourCell == null) return null; // impossible
+                gameField.AddCellCheck2All(neighbourCell);
+                if (neighbourCell.pieceCurrent != null) break;
+            }
+            Piece king = neighbourCell.pieceCurrent;
+            if (gameField.IsHisTurn(king) == false) {
                 return null;
             }
+            if (king.GetPiece() == gameField.pieces.king) {
+                return king;
+            }
+            return null;
+        }
+
+        Cell GetVectorNeighbour(Vector2Int movement) {
+            Cell neighbourCell = this;
+            for(;;) {
+                neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
+                if (neighbourCell == null) return null; // impossible
+                gameField.AddCellCheck2All(neighbourCell);
+                if (neighbourCell.pieceCurrent != null) break;
+            }
+            return neighbourCell;
+        }
         public void VectorCheckKing() {
             
             // Check if this cell has an attack vector
@@ -365,30 +376,26 @@ namespace Andrey04o.Chess {
                 Vector2Int movement = GetDirectionFromBitPosition(bitPosition);
                 // Find the king
                 
-                Piece king = GetKing(movement);
+                Piece king = GetKing(movement); // first, get a line to king
                 if (king == null) {
-                    gameField.ResetCellsCheck2();
+                    gameField.ResetCellsCheck2All();
                     continue;
                 }
 
                 movement = movement * -1;
-                Cell neighbourCell = this;
-                for(;;) {
-                    neighbourCell = neighbourCell.GetNeighbourByOffset(movement);
-                    if (neighbourCell == null) return; // impossible
-                    gameField.AddCellCheck2(neighbourCell);
-                    if (neighbourCell.pieceCurrent != null) break;
-                }
+                Cell neighbourCell = GetVectorNeighbour(movement); // second, get a opposite line to enemy
+                if (neighbourCell == null) continue;
+                
                 Piece neighbourPiece = neighbourCell.pieceCurrent;
                 
                 if (neighbourPiece.isBlack == king.isBlack) {
-                    Debug.Log("reset, king in " + king.GetCurrentCell().name + " movement " + movement + " found piece " + neighbourCell.name);
-                    gameField.ResetCellsCheck2();
-                    return;
+                    gameField.ResetCellsCheck2All();
+                    continue;
                 }
-                Debug.Log("resetnot, king in " + king.GetCurrentCell().name + " movement " + movement + " found piece " + neighbourCell.name);
+                gameField.AddFromCellCheck2AllToCellCheck2(); // finally add cells, if it's our king and it's can get attacked by enemy
             }
         }
+        
         // Writed specially for a king
         Piece GetEnemy(Vector2Int movement) {
             // Find the king

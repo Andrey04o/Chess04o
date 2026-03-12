@@ -19,6 +19,7 @@ namespace Andrey04o.Chess {
         virtual public void PerformMove(Cell cell, Piece piece) {
             
             if (Networking.IsOwner(Networking.LocalPlayer, piece.gameField.gameObject) == false) {
+                piece.gameField.RememberMove(cell.position, piece.id);
                 NetworkCalling.SendCustomNetworkEvent((IUdonEventReceiver)piece.gameField, NetworkEventTarget.Owner, nameof(GameField.PerformMoveNetwork), cell.position, piece.id);
                 Networking.SetOwner(Networking.LocalPlayer, piece.gameField.gameObject);
                 cell.PlacePiece(piece);
