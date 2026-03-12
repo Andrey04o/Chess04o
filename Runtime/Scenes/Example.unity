@@ -4593,8 +4593,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 4e9f930972384ca44a510155ceda3ccb, type: 2}
   - {fileID: 2100000, guid: 49e8a11a4a70c914ebaf9fbd9f999f29, type: 2}
   - {fileID: 2100000, guid: 78ffc8ab6f37a41409a33e18f3998ba7, type: 2}
-  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  - {fileID: 2100000, guid: 7871218972abcce45a649413334f257b, type: 2}
   - {fileID: 2100000, guid: 83034f2a6f00a704fb103b14209d7e38, type: 2}
   - {fileID: 2100000, guid: cca891e3800d66a4e8cc1ff07591e301, type: 2}
   LightMapsNear: []

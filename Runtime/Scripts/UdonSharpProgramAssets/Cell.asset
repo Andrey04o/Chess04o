@@ -116,7 +116,7 @@ MonoBehaviour:
       Data: 6|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Line, com.andrey04o.chess
+      Data: Andrey04o.Chess.Line, com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 
@@ -230,7 +230,7 @@ MonoBehaviour:
       Data: 13|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Piece, com.andrey04o.chess
+      Data: Andrey04o.Chess.Piece, com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 
@@ -332,7 +332,7 @@ MonoBehaviour:
       Data: 18|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.GameField, com.andrey04o.chess
+      Data: Andrey04o.Chess.GameField, com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 
@@ -1250,7 +1250,7 @@ MonoBehaviour:
       Data: 63|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Piece[], com.andrey04o.chess
+      Data: Andrey04o.Chess.Piece[], com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 

@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.Cell, com.andrey04o.chess
+      Data: Andrey04o.Chess.Cell, com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 

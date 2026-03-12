@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.RaycastButton.TileTouch[], com.andrey04o.chess
+      Data: Andrey04o.Chess.RaycastButton.TileTouch[], com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 
@@ -122,7 +122,7 @@ MonoBehaviour:
       Data: 7|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.GameField, com.andrey04o.chess
+      Data: Andrey04o.Chess.GameField, com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 
@@ -338,7 +338,7 @@ MonoBehaviour:
       Data: 19|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Andrey04o.Chess.ChessButtons, com.andrey04o.chess
+      Data: Andrey04o.Chess.ChessButtons, com.andrey04o.chess04o
     - Name: 
       Entry: 8
       Data: 
