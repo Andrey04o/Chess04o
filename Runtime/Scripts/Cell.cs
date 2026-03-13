@@ -37,7 +37,7 @@ namespace Andrey04o.Chess {
         public byte isCalculatedAttacks = 0;
         public void PlacePiece(Piece piece,  bool setPieceCurrent = true) {
             if (setPieceCurrent) pieceCurrent = piece;
-            piece.transform.parent = transform;
+            //piece.transform.parent = transform;
             piece.transform.position = positionPiece.transform.position;
             Quaternion rotation = piece.objectSync.transform.localRotation;
             rotation.eulerAngles = new Vector3(-90, rotation.eulerAngles.y, rotation.eulerAngles.z);

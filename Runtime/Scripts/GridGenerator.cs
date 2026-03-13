@@ -38,6 +38,9 @@ namespace Andrey04o.Chess {
         public OwnerManager ownerManager;
         public Locker lockerWhite;
         public Locker lockerBlack;
+        public Player playerPrefab;
+        public List<Piece> piecesListPlayer = new List<Piece>(16);
+        public List<Player> playersList = new List<Player>();
         private Transform gridContainer;
         #if UNITY_EDITOR
         public void GenerateGrid()
@@ -56,7 +59,7 @@ namespace Andrey04o.Chess {
 
             Pieces pieces = PrefabUtility.InstantiatePrefab(piecesPrefab, this.transform) as Pieces;
             pieces.transform.SetParent(gameField.transform);
-            pieces.gameObject.SetActive(false);
+            //pieces.gameObject.SetActive(false);
             gameField.pieces = pieces;
             stationDesktopView.gameField = gameField;
             Vector3 cellPosition = new Vector3(0, 0, 0);
@@ -123,6 +126,7 @@ namespace Andrey04o.Chess {
             
             piecesList.Clear();
             kingsList.Clear();
+            playersList.Clear();
             foreach (TileTouch tileTouch in tileTouches) {
                 if (tileTouch == null) continue;
                 DestroyImmediate(tileTouch.gameObject);
@@ -136,6 +140,7 @@ namespace Andrey04o.Chess {
             
             pieces.InTableAll = piecesList.ToArray();
             pieces.allKings = kingsList.ToArray();
+            pieces.players = playersList.ToArray();
             Debug.Log(pieces.InTableAll.Length);
             Debug.Log(piecesList.Count);
             gameField.promotionPiece = byte.MaxValue;
@@ -231,49 +236,58 @@ namespace Andrey04o.Chess {
             }
             idChess = 0;
             // Place white pieces (bottom rows, y = 6 and 7 for 8x8 grid)
-            PlacePiecesForPlayer(gameField, 6, 7, pieces.materialWhite, false);
+            PlacePiecesForPlayer(gameField, 6, 7, pieces.materialWhite, 0);
             
             // Place black pieces (top rows, y = 0 and 1 for 8x8 grid)
-            PlacePiecesForPlayer(gameField, 1, 0, pieces.materialBlack, true);
+            PlacePiecesForPlayer(gameField, 1, 0, pieces.materialBlack, 1);
         }
         
-        private void PlacePiecesForPlayer(GameField gameField, int pawnRow, int backRow, Material material, bool isBlack)
+        private void PlacePiecesForPlayer(GameField gameField, int pawnRow, int backRow, Material material, byte side)
         {
             if (gameField.lines.Length < backRow + 1) return;
+            Player player = PrefabUtility.InstantiatePrefab(this.playerPrefab, this.transform) as Player;
+            //player.transform.parent = pieces.transform;
+            
+            player.side = side;
+            piecesListPlayer.Clear();
+            
             Line pawnLine = gameField.lines[pawnRow];
             Line backLine = gameField.lines[backRow];
             
             // Place pawns
             for (int x = 0; x < 8 && x < pawnLine.cells.Length; x++)
             {
-                PlacePiece(gameField, pieces.pawn, pawnLine.cells[x], material, isBlack);
+                PlacePiece(gameField, pieces.pawn, pawnLine.cells[x], material, player);
             }
             
             // Place back row pieces
             if (backLine.cells.Length >= 8)
             {
-                PlacePiece(gameField, pieces.rook, backLine.cells[0], material, isBlack);
-                PlacePiece(gameField, pieces.knight, backLine.cells[1], material, isBlack);
-                PlacePiece(gameField, pieces.bishop, backLine.cells[2], material, isBlack);
-                PlacePiece(gameField, pieces.queen, backLine.cells[3], material, isBlack);
-                PlacePiece(gameField, pieces.king, backLine.cells[4], material, isBlack);
-                PlacePiece(gameField, pieces.bishop, backLine.cells[5], material, isBlack);
-                PlacePiece(gameField, pieces.knight, backLine.cells[6], material, isBlack);
-                PlacePiece(gameField, pieces.rook, backLine.cells[7], material, isBlack);
+                PlacePiece(gameField, pieces.rook, backLine.cells[0], material, player);
+                PlacePiece(gameField, pieces.knight, backLine.cells[1], material, player);
+                PlacePiece(gameField, pieces.bishop, backLine.cells[2], material, player);
+                PlacePiece(gameField, pieces.queen, backLine.cells[3], material, player);
+                PlacePiece(gameField, pieces.king, backLine.cells[4], material, player);
+                PlacePiece(gameField, pieces.bishop, backLine.cells[5], material, player);
+                PlacePiece(gameField, pieces.knight, backLine.cells[6], material, player);
+                PlacePiece(gameField, pieces.rook, backLine.cells[7], material, player);
             }
+            player.pieces = piecesListPlayer.ToArray();
+            player.transform.SetParent(gameField.transform);
+            playersList.Add(player);
         }
         
-        private void PlacePiece(GameField gameField, MoveSet piecePrefab, Cell cell, Material material, bool isBlack)
+        private void PlacePiece(GameField gameField, MoveSet piecePrefab, Cell cell, Material material, Player player)
         {
             if (piecePrefab == null || cell == null) return;
             //PrefabUtility.GetPrefabObject(piecePrefab)
-            Piece piece = PrefabUtility.InstantiatePrefab(this.piecePrefab, cell.transform) as Piece;
+            Piece piece = PrefabUtility.InstantiatePrefab(this.piecePrefab, player.transform) as Piece;
             piece.gameField = gameField;
             //if (piece == null) piece = PrefabUtility.InstantiatePrefab(PrefabUtility.GetOriginalSourceRootWhereGameObjectIsAdded(piecePrefab.gameObject), cell.transform) as Piece;
             if (piece != null)
             {
-                piece.isBlack = isBlack;
-                if (isBlack) {
+                piece.isBlack = player.side == 1;
+                if (piece.isBlack) {
                     piece.forward = new Vector2Int(0,1);
                     piece.left = new Vector2Int(1,0);
                     piece.promotion.rotation.eulerAngles = new Vector3(0, 180, 0); 
@@ -301,8 +315,9 @@ namespace Andrey04o.Chess {
                 piece.originalIndexType = piece.indexType;
                 if (pieces.king == piecePrefab) {
                     kingsList.Add(piece);
+                    player.king = piece;
                 }
-                
+                piecesListPlayer.Add(piece);
                 EditorUtility.SetDirty(cell);
                 EditorUtility.SetDirty(piece);
                 EditorUtility.SetDirty(piece.promotion);

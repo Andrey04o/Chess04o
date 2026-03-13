@@ -3,18 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UdonSharp;
 namespace Andrey04o.Chess {
+    [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class Player : UdonSharpBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            
-        }
+        public Piece[] pieces;
+        public Piece king;
+        public byte side = 0;
     }
 }

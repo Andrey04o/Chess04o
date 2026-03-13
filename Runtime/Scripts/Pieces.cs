@@ -15,6 +15,7 @@ namespace Andrey04o.Chess {
         public Material materialWhite;
         public Material materialBlack;
         public Piece[] InTableAll;
+        public Player[] players;
         public MoveSet GetPiece(byte index) {
             switch (index)
             {
