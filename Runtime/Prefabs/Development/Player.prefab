@@ -55,6 +55,12 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 641050525880086522}
+  pieces: []
+  king: {fileID: 0}
+  side: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!114 &641050525880086522
 MonoBehaviour:
   m_ObjectHideFlags: 0

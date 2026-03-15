@@ -47,7 +47,7 @@ namespace Andrey04o.Chess {
         }
         public void PlacePieceLocal(Piece piece, bool setPieceCurrent = true) {
             if (setPieceCurrent) pieceCurrent = piece;
-            piece.transform.parent = transform;
+            //piece.transform.parent = transform;
             piece.transform.position = positionPiece.transform.position;
             piece.objectSync.transform.localPosition = piece.offset;
             Quaternion rotation = piece.objectSync.transform.localRotation;
@@ -145,6 +145,7 @@ namespace Andrey04o.Chess {
         public void RemoveAttack() {
             attackByCount = 0;
             attackByCountBlack = 0;
+            attackVector = 0;
         }
         public bool CheckMove(Piece piece, bool isKingCheck) {
             bool isCan = false;

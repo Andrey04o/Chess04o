@@ -236,10 +236,10 @@ namespace Andrey04o.Chess {
             }
             idChess = 0;
             // Place white pieces (bottom rows, y = 6 and 7 for 8x8 grid)
-            PlacePiecesForPlayer(gameField, 6, 7, pieces.materialWhite, 0);
+            PlacePiecesForPlayer(gameField, 6, 7, pieces.materialsSide[0], 0);
             
             // Place black pieces (top rows, y = 0 and 1 for 8x8 grid)
-            PlacePiecesForPlayer(gameField, 1, 0, pieces.materialBlack, 1);
+            PlacePiecesForPlayer(gameField, 1, 0, pieces.materialsSide[1], 1);
         }
         
         private void PlacePiecesForPlayer(GameField gameField, int pawnRow, int backRow, Material material, byte side)
@@ -274,6 +274,16 @@ namespace Andrey04o.Chess {
             }
             player.pieces = piecesListPlayer.ToArray();
             player.transform.SetParent(gameField.transform);
+
+                if (side == 1) {
+                    player.forward = new Vector2Int(0,1);
+                    player.left = new Vector2Int(1,0);
+                    player.promotionAngle = new Vector3(0, 180, 0); 
+                } else {
+                    player.forward = new Vector2Int(0,-1);
+                    player.left = new Vector2Int(-1,0);
+                    player.promotionAngle = new Vector3(0, 0, 0); 
+                }
             playersList.Add(player);
         }
         

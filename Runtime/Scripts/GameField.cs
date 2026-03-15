@@ -142,16 +142,19 @@ namespace Andrey04o.Chess {
         public void CalcAttacks() {
             if (isAttackCalc == true) return;
             isAttackCalc = true;
-            foreach (Piece piece in pieces.InTableAll) {
-                piece.GetPiece().CalcAttack(piece);
+            foreach (Player player in pieces.players) {
+                foreach (Piece piece in player.pieces) {
+                    piece.GetPiece().CalcAttack(piece);
+                }
             }
         }
         public void RemoveAttack() {
             isAttackCalc = false;
-            foreach (Piece piece in pieces.InTableAll) {
-                piece.GetPiece().RemoveAttack(piece);
-            }
+            //foreach (Piece piece in pieces.InTableAll) {
+            //    piece.GetPiece().RemoveAttack(piece);
+            //}
             foreach (Cell cell in cells) {
+                if (cell == null) continue;
                 cell.RemoveAttack();
             }
         }

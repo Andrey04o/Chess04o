@@ -12,6 +12,7 @@ namespace Andrey04o.Chess {
         public Pawn pawn;
         public Queen queen;
         public Rook rook;
+        public Material[] materialsSide;
         public Material materialWhite;
         public Material materialBlack;
         public Piece[] InTableAll;
