@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UdonSharp;
+using System;
 namespace Andrey04o.Chess {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class Pieces : UdonSharpBehaviour
@@ -12,6 +13,7 @@ namespace Andrey04o.Chess {
         public Pawn pawn;
         public Queen queen;
         public Rook rook;
+        public ColorSide[] colorSides;
         public Material[] materialsSide;
         public Material materialWhite;
         public Material materialBlack;

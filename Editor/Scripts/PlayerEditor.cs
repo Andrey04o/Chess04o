@@ -37,8 +37,10 @@ namespace Andrey04o.Chess {
             }
             if (GUILayout.Button("Change color")) {
                 foreach (Piece piece in myTarget.pieces) {
-                    piece.meshRenderer.sharedMaterial = piece.gameField.pieces.materialsSide[myTarget.side];
-                    EditorUtility.SetDirty(piece.meshRenderer);  
+                    piece.meshRenderer.sharedMaterial = piece.gameField.pieces.colorSides[myTarget.side].material;
+                    piece.spriteRenderer.sprite = piece.gameField.pieces.colorSides[myTarget.side].sprites[piece.indexType - 1];
+                    EditorUtility.SetDirty(piece.meshRenderer);
+                    EditorUtility.SetDirty(piece.spriteRenderer);  
                 }
                 EditorUtility.SetDirty(myTarget);
             }
