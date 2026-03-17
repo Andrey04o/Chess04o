@@ -13,8 +13,8 @@ namespace Andrey04o.Chess.RaycastButton{
         public CursorController cursorController;
         public GameObject interfaceWindow;
         public TextMeshProUGUI textMeshMouseSpeed;
-        public bool side;
-        bool currentTurn = false;
+        public byte side;
+        byte currentTurn = 0;
         public Transform arrowTurn;
         public TextMeshProUGUI textMeshArrow;
         public GameObject interfaceWindowHided;
@@ -61,7 +61,7 @@ namespace Andrey04o.Chess.RaycastButton{
             interfaceWindow.SetActive(!interfaceWindow.activeSelf);
             interfaceWindowHided.SetActive(!interfaceWindow.activeSelf);
         }
-        public void Show(bool value, Locker locker, bool side = true) {
+        public void Show(bool value, Locker locker, byte side = 0) {
             gameObject.SetActive(value);
             this.side = side;
             ShowSide();
@@ -74,7 +74,7 @@ namespace Andrey04o.Chess.RaycastButton{
         public void Hide() {
             gameObject.SetActive(false);
         }
-        public void ChandeSide(bool side) {
+        public void ChandeSide(byte side) {
             currentTurn = side;
             ShowSide();
         }
@@ -84,7 +84,7 @@ namespace Andrey04o.Chess.RaycastButton{
                 arrowTurn.localRotation = lookDown;
             } else {
                 arrowTurn.localRotation = lookUp;
-                if (side == true) {
+                if (side == 0) {
                     textMeshArrow.text = "White turn";
                 } else {
                     textMeshArrow.text = "Black turn";

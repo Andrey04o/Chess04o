@@ -20,28 +20,22 @@ namespace Andrey04o.Chess.RaycastButton {
         public Locker lockerWhite;
         public Locker lockerBlack;
         Locker lockerCurrent;
-        bool currentSide;
-        public void Enter(bool side) {
+        byte currentSide;
+        Player currentPlayer;
+        public void Enter(byte side) {
             currentSide = side;
+            currentPlayer = gameField.pieces.players[currentSide];
             gameField.touchControls.ChangeMethod(false);
-            rotation = camera.transform.localRotation;
-            rotationEuler = rotation.eulerAngles;
-            if (side) rotationEuler.y = 180;
-            else rotationEuler.y = 0;
-            rotation.eulerAngles = rotationEuler;
-            camera.transform.localRotation = rotation;
+            camera.transform.rotation = currentPlayer.desktopPosition.transform.rotation;
+            
             //station.transform.position = Networking.LocalPlayer.GetPosition();
             //station.transform.eulerAngles = new Vector3 (0f, Networking.LocalPlayer.GetRotation().eulerAngles.y, 0f);
             blockerInteraction.gameObject.SetActive(true);
             blockerInteraction.transform.position = Networking.LocalPlayer.GetTrackingData(VRCPlayerApi.TrackingDataType.Head).position;
             Networking.LocalPlayer.Immobilize(true);
-            if (!side) {
-                station.UseStation(Networking.LocalPlayer);
-                lockerCurrent = lockerWhite;
-            } else {
-                stationBlack.UseStation(Networking.LocalPlayer);
-                lockerCurrent = lockerBlack;
-            }
+            currentPlayer.station.UseStation(Networking.LocalPlayer);
+            lockerCurrent =  currentPlayer.locker;
+
             desktopControls.Show(true, lockerCurrent, side);
             desktopControl.SetActive(true);
             DisableInteractive = true;
@@ -58,8 +52,7 @@ namespace Andrey04o.Chess.RaycastButton {
             blockerInteraction.gameObject.SetActive(false);
             desktopControl.SetActive(false);
             Networking.LocalPlayer.Immobilize(false);
-            if (!currentSide) station.ExitStation(Networking.LocalPlayer);
-            else stationBlack.ExitStation(Networking.LocalPlayer);
+            currentPlayer.station.ExitStation(Networking.LocalPlayer);
             desktopControls.Hide();
             DisableInteractive = false;
 

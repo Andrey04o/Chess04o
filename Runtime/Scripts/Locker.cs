@@ -11,7 +11,7 @@ namespace Andrey04o.Chess {
     public class Locker : UdonSharpBehaviour
     {
         public GameField gameField;
-        public bool isBlack = false;
+        public Player player;
         //public Piece[] pieces;
         public TextMeshProUGUI textMeshPlayer;
         public Image imageLock;
@@ -62,8 +62,7 @@ namespace Andrey04o.Chess {
             if (Networking.LocalPlayer.IsOwner(gameObject)) {
                 _isLocked = false;
             }
-            foreach (Piece piece in gameField.pieces.InTableAll) {
-                if (piece.isBlack != isBlack) continue;
+            foreach (Piece piece in player.pieces) {
                 piece.EnablePickup(!_isLocked);
                 //piece.StopGrab(null);
             }

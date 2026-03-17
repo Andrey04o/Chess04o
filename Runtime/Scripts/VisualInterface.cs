@@ -18,8 +18,8 @@ namespace Andrey04o.Chess {
         public TextMeshProUGUI textMeshArrowBlack;
         public TextMeshProUGUI textMeshArrowWhite;
         public DesktopControls desktopControls;
-        public void ShowTurn(bool isBlack) {
-            if (isBlack) {
+        public void ShowTurn(byte side) {
+            if (side == 1) {
                 arrowTurnBlackDown.SetActive(true);
                 arrowTurnBlack.SetActive(false);
                 arrowTurnWhiteDown.SetActive(true);
@@ -31,14 +31,14 @@ namespace Andrey04o.Chess {
                 arrowTurnWhite.SetActive(true);
             }
 
-            if (isBlack) {
+            if (side == 1) {
                 textMeshArrowBlack.text = "Your turn";
                 textMeshArrowWhite.text = "Black turn";
             } else {
                 textMeshArrowBlack.text = "White turn";
                 textMeshArrowWhite.text = "Your turn";
             }
-            desktopControls.ChandeSide(isBlack);
+            desktopControls.ChandeSide(side);
         }
 
         public void ShowWinnerWindow(byte stalemate, bool isBlack = true) {

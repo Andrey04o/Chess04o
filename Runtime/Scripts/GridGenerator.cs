@@ -296,8 +296,7 @@ namespace Andrey04o.Chess {
             //if (piece == null) piece = PrefabUtility.InstantiatePrefab(PrefabUtility.GetOriginalSourceRootWhereGameObjectIsAdded(piecePrefab.gameObject), cell.transform) as Piece;
             if (piece != null)
             {
-                piece.isBlack = player.side == 1;
-                if (piece.isBlack) {
+                if (player.side == 1) {
                     piece.forward = new Vector2Int(0,1);
                     piece.left = new Vector2Int(1,0);
                     piece.promotion.rotation.eulerAngles = new Vector3(0, 180, 0); 

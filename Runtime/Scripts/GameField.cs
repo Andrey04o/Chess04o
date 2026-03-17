@@ -6,6 +6,7 @@ using VRC.Udon.Common;
 using VRC.SDK3.UdonNetworkCalling;
 using Andrey04o.Chess.RaycastButton;
 using VRC.SDKBase;
+using System;
 namespace Andrey04o.Chess {
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class GameField : UdonSharpBehaviour
@@ -83,11 +84,8 @@ namespace Andrey04o.Chess {
             else isPiecePickedUp = true;
         }
         public void DropPiece() {
-            Debug.Log("piecedropp");
             if (pieceHolding != null) {
-                Debug.Log("pieceholding != null");
                 if (cellHovered != null) {
-                    Debug.Log("piecedropp, " + cellHovered.name);
                     pieceHolding.StopGrab(cellHovered.cell);
                 }
                 else
@@ -114,25 +112,10 @@ namespace Andrey04o.Chess {
 
         }
         public bool IsCanUse(Piece piece) {
-            if (piece.isBlack) {
-                return lockerBlack.IsCanUse();
-            } else {
-                return lockerWhite.IsCanUse();
-            }
-            return true;
+            return pieces.players[piece.side].locker.IsCanUse();
         }
         public bool IsHisTurn(Piece piece) {
-            if (indexSideTurn == 0) {
-                if (piece.isBlack == false) {
-                    return true;
-                }
-            }
-            if (indexSideTurn == 1) {
-                if (piece.isBlack == true) {
-                    return true;
-                }
-            }
-            return false;
+            return indexSideTurn == piece.side;
         }
         public void ChangeSide() {
             indexSideTurn++;
@@ -329,17 +312,22 @@ namespace Andrey04o.Chess {
             int offset = 0;
             
             // Pack pieces data
-            foreach (Piece piece in pieces.InTableAll) {
-                syncData[offset++] = piece.indexType;
-                syncData[offset++] = piece.position;
-                syncData[offset++] = piece.isNotMoved;
-                syncData[offset++] = piece.isCaptured;
+            foreach (Player player in pieces.players) {
+                foreach (Piece piece in player.pieces) {
+                    syncData[offset++] = piece.indexType;
+                    syncData[offset++] = piece.position;
+                    syncData[offset++] = piece.isNotMoved;
+                    syncData[offset++] = piece.isCaptured;
+                }
             }
             
             // Pack cells data
+            foreach (Player player in pieces.players) {
+                foreach (byte count in player.attackByCount) {
+                    syncData[offset++] = count;
+                }
+            }
             foreach (Cell cell in cells) {
-                syncData[offset++] = cell.attackByCount;
-                syncData[offset++] = cell.attackByCountBlack;
                 syncData[offset++] = cell.attackVector;
             }
         }
@@ -353,68 +341,65 @@ namespace Andrey04o.Chess {
                 cell.pieceEnPassant = null;
             }
             // Unpack pieces data
-            foreach (Piece piece in pieces.InTableAll) {
-                piece.pieceGrab.StopGrab();
-                piece.indexType = syncData[offset++];
-                piece.position = syncData[offset++];
-                piece.isNotMoved = syncData[offset++];
-                piece.isCaptured = syncData[offset++];
-                piece.PerformCapture(false);
-                if (piece.isCaptured == 0) {
-                    cells[piece.position].PlacePieceLocal(piece);
-                    piece.PlaySound();
-                    cells[piece.position].pieceCurrent = piece;
+            foreach (Player player in pieces.players) {
+                foreach (Piece piece in player.pieces) {
+                    piece.indexType = syncData[offset++];
+                    piece.position = syncData[offset++] ;
+                    piece.isNotMoved = syncData[offset++];
+                    piece.isCaptured = syncData[offset++];
+                    piece.PerformCapture(false);
+                    if (piece.isCaptured == 0) {
+                        cells[piece.position].PlacePieceLocal(piece);
+                        piece.PlaySound();
+                        cells[piece.position].pieceCurrent = piece;
+                    }
+                    piece.ChangeType(piece.indexType);
                 }
-                piece.ChangeType(piece.indexType);
             }
             
             // Unpack cells data
+            foreach (Player player in pieces.players) {
+                for (int i = 0; i < player.attackByCount.Length; i++) {
+                    player.attackByCount[i] = syncData[offset++];
+                }
+            }
             foreach (Cell cell in cells) {
-                cell.attackByCount = syncData[offset++];
-                cell.attackByCountBlack = syncData[offset++];
                 cell.attackVector = syncData[offset++];
             }
         }
         public void CheckStalemate() {
-            //isStalemateCheck = true;
-            Piece piece;
-            for (int i = 0; i < pieces.InTableAll.Length; i++) {
-                piece = pieces.InTableAll[i];
-                
-                if (IsHisTurn(piece) == false) {
-                    continue;
+            foreach (Player player in pieces.players) {
+                if (player.IsHisTurn() == false) continue;
+                foreach (Piece piece in player.pieces) {
+                    if (IsHisTurn(piece) == false) {
+                        continue;
                     }
-                if (piece.isCaptured == 1) {
-                    continue;
+                    if (piece.isCaptured == 1) {
+                        continue;
                     }
-                piece.GetPiece().ShowMove(piece);
-                if (dirMoveCount != 0) {
-                    Debug.Log("no stalemate");
-                    HideMove();
-                    return;
+                    piece.GetPiece().ShowMove(piece);
+                    if (dirMoveCount != 0) { // no stalemate
+                        HideMove();
+                        return;
+                    }
                 }
             }
             isStalemate = 1;
-            Debug.Log("stalemate 1, side " + indexSideTurn);
-            //ResetStalemate();
         }
         public void CheckKing() {
-            if (pieceAttackKing == byte.MaxValue) return;
-            Piece piece = pieces.InTableAll[pieceAttackKing];
+            if (pieces.players[indexSideTurn].pieceAttackKing == byte.MaxValue) return;
             byte attack;
-            foreach (Piece king in pieces.allKings) {
-                attack = king.GetCurrentCell().CountAttack(king);
-                if (attack > 1) {
-                    isKingCheck = 1; 
-                    return; // only king moves are possible
-                }
-                if (attack > 0) {
-                    king.GetCurrentCell().VectorGetPieces(king, true);
-                    break;
-                }
+            Piece king = pieces.players[indexSideTurn].king;
+            attack = king.GetCurrentCell().CountAttack(king);
+            if (attack > 1) {
+                isKingCheck = 1; 
+                return; // only king moves are possible
             }
+            if (attack > 0) {
+                king.GetCurrentCell().VectorGetPieces(king, true);
+            }
+            AddCellCheck(pieces.InTableAll[pieces.players[indexSideTurn].pieceAttackKing].GetCurrentCell());
             
-            AddCellCheck(piece.GetCurrentCell());
             isKingCheck = 1;
             
             SetCellsToCheck();
@@ -487,7 +472,7 @@ namespace Andrey04o.Chess {
         public void PerformCheckIsKing(Cell cell, Piece piece) {
             if (cell.pieceCurrent == null) return;
             if (cell.pieceCurrent.GetPiece() == pieces.king) {
-                if (cell.pieceCurrent.isBlack != piece.isBlack) {
+                if (cell.pieceCurrent.side != piece.side) {
                     AddAttackPieceKing(piece);
                     Debug.Log(piece.GetCurrentCell().name + "is attacking");
                 }
@@ -560,9 +545,10 @@ namespace Andrey04o.Chess {
             }
         }
         public void ShowPieces(Quaternion rotation) {
-            foreach(Piece piece in pieces.InTableAll) {
-                piece.ShowPiece(rotation);
-                //if (!IsCanUse(piece)) piece.meshCollider = false;
+            foreach(Player player in pieces.players) {
+                foreach (Piece piece in player.pieces) {
+                    piece.ShowPiece(rotation);
+                }
             }
         }
         public void RestartBoard() {
@@ -584,7 +570,7 @@ namespace Andrey04o.Chess {
         }
         public void PerformShowVisual() {
             visualInterface.ShowWinnerWindow(isStalemate, indexSideTurn == 0);
-            visualInterface.ShowTurn(indexSideTurn == 1);
+            visualInterface.ShowTurn(indexSideTurn);
         }
         public void DrawCellAttackKing() {
             if (pieceAttackKingPiece != null) {
@@ -625,11 +611,13 @@ namespace Andrey04o.Chess {
             audioSource.Play();
         }
         public void ShowPieceColliders(bool value) {
-            foreach (Piece piece in pieces.InTableAll) {
-                if (value == false) {
-                    piece.meshCollider.enabled = false;
-                } else {
-                    piece.ShowCollider();
+            foreach (Player player in pieces.players) {
+                foreach (Piece piece in player.pieces) {
+                    if (value == false) {
+                        piece.meshCollider.enabled = false;
+                    } else {
+                        piece.ShowCollider();
+                    }
                 }
             }
         }

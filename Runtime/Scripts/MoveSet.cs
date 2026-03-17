@@ -34,11 +34,7 @@ namespace Andrey04o.Chess {
             piece.gameField.SetPosition(cell);
 
             if (piece.gameField.settings.isAutoLock == true) {
-                if (piece.isBlack) {
-                    piece.gameField.lockerBlack.Lock();
-                } else {
-                    piece.gameField.lockerWhite.Lock();
-                }
+                piece.GetPlayer().locker.Lock();
             }
 
             piece.gameField.MakeMove();

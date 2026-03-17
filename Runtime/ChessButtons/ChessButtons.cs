@@ -51,12 +51,6 @@ namespace Andrey04o.Chess {
         public void ToggleTouchScreen() {
             touchControls.ChangeMethod(!touchControls.isEnabledTouchSupport);
         }
-        public void DesktopModeWhite() {
-            stationDesktopView.Enter(false);
-        }
-        public void DesktopModeBlack() {
-            stationDesktopView.Enter(true);
-        }
         public void LockerWhite() {
             lockerWhite.Use();
         }

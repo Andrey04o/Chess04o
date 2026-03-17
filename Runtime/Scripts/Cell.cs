@@ -135,11 +135,13 @@ namespace Andrey04o.Chess {
             }
             if (isAttack) {
                 piece.gameField.PerformCheckIsKing(this, piece);
-                if (piece.isBlack) attackByCountBlack++;
-                else attackByCount++;
+                piece.GetPlayer().attackByCount[position]++;
+                //if (piece.isBlack) attackByCountBlack++;
+                //else attackByCount++;
             } else {
-                if (piece.isBlack) attackByCountBlack--;
-                else attackByCount--;
+                piece.GetPlayer().attackByCount[position]--;
+                //if (piece.isBlack) attackByCountBlack--;
+                //else attackByCount--;
             }
         }
         public void RemoveAttack() {
@@ -151,7 +153,7 @@ namespace Andrey04o.Chess {
             bool isCan = false;
             if (pieceCurrent == null) {
                 isCan = true;
-            } else if (pieceCurrent.isBlack != piece.isBlack){
+            } else if (pieceCurrent.side != piece.side){
                 isCan = true;
             }
             if (isCan && isKingCheck) {
@@ -186,7 +188,7 @@ namespace Andrey04o.Chess {
             isCanMoveHere = false;
             if (pieceCurrent == null) {
                 isCanMoveHere = true;
-            } else if (pieceCurrent.isBlack != piece.isBlack){
+            } else if (pieceCurrent.side != piece.side){
                 isCanMoveHere = true;
             }
             if (isCanMoveHere && isKingCheck) {
@@ -276,20 +278,19 @@ namespace Andrey04o.Chess {
             return result;
         }
         public bool IsAttacking(Piece piece) {
-            if (piece.isBlack) {
-                if (attackByCount != 0) return true;
-            } else {
-                if (attackByCountBlack != 0) return true;
+            foreach (Player player in gameField.pieces.players) {
+                if (piece.side == player.side) continue;
+                if (player.IsAttackCell(this)) return true;
             }
             return false;
         }
         public byte CountAttack(Piece piece) {
-            if (piece.isBlack) {
-                return attackByCount;
-            } else {
-                return attackByCountBlack;
+            byte count = 0;
+            foreach (Player player in gameField.pieces.players) {
+                if (piece.side == player.side) continue;
+                count += player.CountAttackCell(this);
             }
-            return 0;
+            return count;
         }
         public void SetAttackVector(Vector2Int dir, bool isAttack) {
             
@@ -322,7 +323,7 @@ namespace Andrey04o.Chess {
                 }
                 Piece neighbourPiece = neighbourCell.pieceCurrent;
                 if (isKingCheck) {
-                    if (piece.isBlack == neighbourPiece.isBlack) {
+                    if (piece.side == neighbourPiece.side) {
                         gameField.ResetCellsCheck();
                         continue;
                     }
@@ -388,7 +389,7 @@ namespace Andrey04o.Chess {
                 
                 Piece neighbourPiece = neighbourCell.pieceCurrent;
                 
-                if (neighbourPiece.isBlack == king.isBlack) {
+                if (neighbourPiece.side == king.side) {
                     gameField.ResetCellsCheck2All();
                     continue;
                 }
@@ -406,7 +407,7 @@ namespace Andrey04o.Chess {
                     if (neighbourCell.pieceCurrent != null) break;
                 }
                 Piece enemy = neighbourCell.pieceCurrent;
-                if (pieceCurrent.isBlack != enemy.isBlack) {
+                if (pieceCurrent.side != enemy.side) {
                     return enemy;
                 }
                 return null;
@@ -432,24 +433,13 @@ namespace Andrey04o.Chess {
                 gameField.AddCellInAttack(neighbourCell);
             }
         }
-        /*
-        public void VectorCalcAttack(bool isRemove = false) {
-            for (int i = 0; i < piecesVectorCount; i++) {
-                if (piecesVector[i].isCaptured == 1) continue;
-                piecesVector[i].GetPiece().CalcAttack(piecesVector[i], isRemove);
-            }
-        }
-        */
 
         int GetBitPositionFromDirection(Vector2Int dir) {
-            // Кодируем направление в индекс через смещение
-            // x: -1→0, 0→1, 1→2 | y: -1→0, 0→1, 1→2
-            int ix = dir.x + 1; // 0,1,2
-            int iy = dir.y + 1; // 0,1,2
-            int index = iy * 3 + ix; // 0..8
-            
-            // Таблица соответствия 3x3 → биты (9 = недопустимое)
-            int[] map = { 0, 2, 1, 6, 9, 7, 5, 3, 4 }; // [y= -1,0,1][x=-1,0,1]
+            int ix = dir.x + 1;
+            int iy = dir.y + 1;
+            int index = iy * 3 + ix;
+
+            int[] map = { 0, 2, 1, 6, 9, 7, 5, 3, 4 };
             
             int result = map[index];
             return result == 9 ? -1 : result;

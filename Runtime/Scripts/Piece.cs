@@ -28,7 +28,7 @@ namespace Andrey04o.Chess {
         public VRCPickup pickup;
         public VRCObjectSync objectSync;
         public byte positionPrevious;
-        public bool isBlack = false;
+        public byte side = 0; // isBlack
         public bool isMoved = false;
         public bool isLocked = false;
         public byte isCalculatedAttacks = 0;
@@ -59,6 +59,9 @@ namespace Andrey04o.Chess {
         public Cell GetCurrentCellPrevious() {
             return gameField.cells[positionPrevious];
         }
+        public Player GetPlayer() {
+            return gameField.pieces.players[side];
+        }
         public void ChangeType(byte indexType) {
             if (isCaptured == 1) return;
             if (indexTypePrevious == indexType) return;
@@ -70,8 +73,7 @@ namespace Andrey04o.Chess {
                 meshRenderer.gameObject.transform.localPosition = offset;
                 this.indexType = indexType;
                 indexTypePrevious = indexType;
-                if (isBlack) spriteRenderer.sprite  = moveSet.spriteBlack;
-                else spriteRenderer.sprite = moveSet.spriteWhite;
+                spriteRenderer.sprite = gameField.pieces.colorSides[side].sprites[indexType - 1];
             }
         }
         public void StartGrab(bool isVR) {

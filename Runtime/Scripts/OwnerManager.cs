@@ -30,9 +30,11 @@ namespace Andrey04o.Chess {
             
         }
         public void SetPiecesCollision(bool value) {
-            foreach (Piece piece in gameField.pieces.InTableAll) {
-                if (piece.isCaptured == 0) {
+            foreach (Player player in gameField.pieces.players) {
+                foreach (Piece piece in player.pieces) {
+                   if (piece.isCaptured == 0) {
                     piece.ShowPiece(Quaternion.identity);
+                } 
                 }
             }
         }
